@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-z9fth!vpz4p2j5%d3asj)%r+i8ako&b@qfp)98ycie+l=mtomo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tasktrackbot-amisleo000.b4a.run']
 
 
 # Application definition
