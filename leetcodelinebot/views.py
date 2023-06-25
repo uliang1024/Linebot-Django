@@ -8,8 +8,6 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from .models import ReportLog
-
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
@@ -28,19 +26,10 @@ def callback(request):
             return HttpResponseBadRequest()
  
         for event in events:
-            if isinstance(event, MessageEvent):
-                # 查询 ReportLog 数据示例
-                reports = ReportLog.objects.all()  # 获取所有 ReportLog 记录
-                for report in reports:
-                    name = report.name
-                    done = report.done
-                    # 其他操作...
-
-                # 回复消息
-                reply_text = f"Name: {name}\nDone: {done}"
-                line_bot_api.reply_message(
+            if isinstance(event, MessageEvent):  # 如果有訊息事件
+                line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
-                    TextSendMessage(text=reply_text)
+                    TextSendMessage(text=event.message.text)
                 )
         return HttpResponse()
     else:
