@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'leetcodelinebot.apps.LeetcodelinebotConfig'
+    'leetcodelinebot.apps.LeetcodelinebotConfig',
+    'django_mongoengine'
 ]
 
 MIDDLEWARE = [
@@ -62,11 +63,20 @@ WSGI_APPLICATION = 'tasktrackbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+MONGODB_DATABASES = {
+    "default": {
+        "name": 'd7b31b754ebb4b1982d18d2a08d932dd',
+        "host": 'MongoS3601A.back4app.com:27017',
+        "password": 'CRW5IYF6L2akAaFvqag6oouz',
+        "username": 'admin',
+    },
 }
 
 
