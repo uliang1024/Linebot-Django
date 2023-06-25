@@ -1,11 +1,12 @@
 from django.db import models
+from django_mongoengine import Document, fields
 
-class ReportLog(models.Model):
-    _id = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
-    done = models.BooleanField(default=False)
-    _created_at = models.DateTimeField()
-    _updated_at = models.DateTimeField()
+class ReportLog(Document):
+    name = fields.StringField(required=True)
+    done = fields.BooleanField(default=False)
+    created_at = fields.DateTimeField(required=True)
+    updated_at = fields.DateTimeField(required=True)
 
-    def __str__(self):
-        return self.name
+    meta = {
+        'collection': 'ReportLog'  # 设置集合名称
+    }

@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'leetcodelinebot.apps.LeetcodelinebotConfig',
+    'django_mongoengine',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ DATABASES = {
     }
 }
 
-connect("d7b31b754ebb4b1982d18d2a08d932dd", host="mongodb://admin:CRW5IYF6L2akAaFvqag6oouz@MongoS3601A.back4app.com:27017")
+connect(host="mongodb://admin:CRW5IYF6L2akAaFvqag6oouz@MongoS3601A.back4app.com:27017/d7b31b754ebb4b1982d18d2a08d932dd")
 
 AUTH_PASSWORD_VALIDATORS = [
     {

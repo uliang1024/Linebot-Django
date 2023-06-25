@@ -8,7 +8,7 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from leetcodelinebot.models import ReportLog
+from .models import ReportLog
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -29,10 +29,12 @@ def callback(request):
  
         for event in events:
             if isinstance(event, MessageEvent):
-                # 查询数据
-                data = ReportLog.objects().first()  # 获取第一条数据
-                name = data.name
-                done = data.Done
+                # 查询 ReportLog 数据示例
+                reports = ReportLog.objects.all()  # 获取所有 ReportLog 记录
+                for report in reports:
+                    name = report.name
+                    done = report.done
+                    # 其他操作...
 
                 # 回复消息
                 reply_text = f"Name: {name}\nDone: {done}"
