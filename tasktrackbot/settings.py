@@ -18,7 +18,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'leetcodelinebot.apps.LeetcodelinebotConfig',
-    'django_mongoengine',
+    'rest_framework',
+    'rest_framework_mongoengine',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,7 @@ WSGI_APPLICATION = 'tasktrackbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.dummy',
+        'ENGINE': '',
     }
 }
 
