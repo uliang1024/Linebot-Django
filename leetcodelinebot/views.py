@@ -6,6 +6,8 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
+from .models import MyModel
+
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
@@ -24,10 +26,24 @@ def callback(request):
 
         for event in events:
             if isinstance(event, MessageEvent):
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=event.message.text)
-                )
+                if event.message.text.startswith("完成"):
+                    # 解析用户输入的数字
+                    try:
+                        num = int(event.message.text.split(" ")[1])
+                    except IndexError:
+                        continue
+                    except ValueError:
+                        continue
+
+                    # 将数字保存到数据库
+                    my_object = MyModel(field1='Value', field2=num)
+                    my_object.save()
+
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text="已将数字保存到数据库")
+                    )
+
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
