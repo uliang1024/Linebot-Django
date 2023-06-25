@@ -8,6 +8,8 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
+from leetcodelinebot.models import ReportLog
+
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
@@ -26,10 +28,17 @@ def callback(request):
             return HttpResponseBadRequest()
  
         for event in events:
-            if isinstance(event, MessageEvent):  # 如果有訊息事件
-                line_bot_api.reply_message(  # 回復傳入的訊息文字
+            if isinstance(event, MessageEvent):
+                # 查询数据
+                data = ReportLog.objects().first()  # 获取第一条数据
+                name = data.name
+                done = data.Done
+
+                # 回复消息
+                reply_text = f"Name: {name}\nDone: {done}"
+                line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text=event.message.text)
+                    TextSendMessage(text=reply_text)
                 )
         return HttpResponse()
     else:
