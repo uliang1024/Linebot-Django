@@ -1,4 +1,5 @@
 from pathlib import Path
+from mongoengine import connect
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'leetcodelinebot.apps.LeetcodelinebotConfig',
-    'django_mongoengine'
 ]
 
 MIDDLEWARE = [
@@ -63,25 +63,13 @@ WSGI_APPLICATION = 'tasktrackbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mongodb',
-#         'NAME': 'd7b31b754ebb4b1982d18d2a08d932dd',  # 数据库名称
-#         'USER': 'admin',  # 用户名
-#         'PASSWORD': 'CRW5IYF6L2akAaFvqag6oouz',  # 密码
-#         'HOST': 'MongoS3601A.back4app.com',  # 主机
-#         'PORT': 27017,  # 端口
-#     }
-# }
-
-MONGODB_DATABASES = {
-    "default": {
-        "name": 'd7b31b754ebb4b1982d18d2a08d932dd',
-        "host": 'MongoS3601A.back4app.com:27017',
-        "password": 'CRW5IYF6L2akAaFvqag6oouz',
-        "username": 'admin',
-    },
+DATABASES = {
+    'default': {
+        'ENGINE': '',
+    }
 }
+
+connect("d7b31b754ebb4b1982d18d2a08d932dd", host="mongodb://admin:CRW5IYF6L2akAaFvqag6oouz@MongoS3601A.back4app.com:27017")
 
 
 # Password validation
