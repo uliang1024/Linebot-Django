@@ -31,8 +31,16 @@ def callback(request):
                     try:
                         num = int(event.message.text.split(" ")[1])
                     except IndexError:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text="请输入正确的格式，例如：完成 1")
+                        )
                         continue
                     except ValueError:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text="请输入有效的数字")
+                        )
                         continue
 
                     # 将数字保存到数据库
