@@ -1,5 +1,4 @@
 from pathlib import Path
-from mongoengine import connect
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -71,7 +70,15 @@ WSGI_APPLICATION = 'tasktrackbot.wsgi.application'
 #     }
 # }
 
-connect(host="mongodb://admin:CRW5IYF6L2akAaFvqag6oouz@MongoS3601A.back4app.com:27017/d7b31b754ebb4b1982d18d2a08d932dd")
+MONGODB_DATABASES = {
+    "default": {
+        "name": 'd7b31b754ebb4b1982d18d2a08d932dd',
+        "host": 'MongoS3601A.back4app.com:27017',
+        "password": 'CRW5IYF6L2akAaFvqag6oouz',
+        "username": 'admin',
+    },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
