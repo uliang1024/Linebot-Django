@@ -151,8 +151,8 @@ def remind_user_evening():
 
 # 設定排程任務
 schedule.every().day.at("03:05").do(remind_user)
-schedule.every().day.at("15:00").do(remind_user_afternoon)
-schedule.every().day.at("21:00").do(remind_user_evening)
+schedule.every().day.at("03:06").do(remind_user_afternoon)
+schedule.every().day.at("03:07").do(remind_user_evening)
 
 # 進入無限迴圈，持續執行排程任務
 while True:
