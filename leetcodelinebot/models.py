@@ -45,5 +45,5 @@ def write_to_report_log(user_name, topic, done):
     
     # 儲存 ReportLog 物件到資料庫
     report_log.save()
-    reply_text = f"已新增 ReportLog 資料"
+    reply_text = f"已新增 ReportLog 資料 {taiwan_time.strftime('%m/%d %H:%M')}"
     return reply_text
