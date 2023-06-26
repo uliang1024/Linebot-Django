@@ -1,5 +1,19 @@
-from django_mongoengine import Document, fields
+from mongoengine import *
 
 class ReportLog(Document):
-    name = fields.StringField(max_length=255)
-    Done = fields.BooleanField()
+    name = StringField()
+    topic = StringField()
+    done = BooleanField()
+    created_at = DateTimeField()
+
+    meta = {
+        'collection': 'ReportLog',
+        'indexes': [
+            # 定义索引（可选）
+            'name',
+            'topic',
+            'created_at',
+        ],
+        'ordering': ['created_at'],
+        'strict': False 
+    }

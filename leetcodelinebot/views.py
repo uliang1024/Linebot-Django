@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -15,7 +14,6 @@ parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 @csrf_exempt
 def callback(request):
- 
     if request.method == 'POST':
         signature = request.META['HTTP_X_LINE_SIGNATURE']
         body = request.body.decode('utf-8')
@@ -30,25 +28,18 @@ def callback(request):
         for event in events:
             if isinstance(event, MessageEvent):  # 如果有訊息事件
                 if event.message.text == '資料':
-                    # 查询 ReportLog 文档的数据
-                    report_logs = ReportLog.objects.all()
-
-                    # 遍历查询结果
-                    for report_log in report_logs:
-                        name = report_log.name
-                        done = report_log.Done
-
-                        # 将 name 和 Done 回复给用户
-                        reply_text = f"name: {name}, Done: {done}"
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text=reply_text)
-                        )
-                else:
-                    line_bot_api.reply_message(  # 回復傳入的訊息文字
+                    reply_text = get_report_logs()  # 调用函数获取 ReportLog 数据
+                    line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=event.message.text)
+                        TextSendMessage(text=reply_text)  # 构建回复消息
                     )
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
+
+def get_report_logs():
+    all_logs = ReportLog.objects.all()
+    reply_text = ""
+    for log in all_logs:
+        reply_text += f"Name: {log.name}, Topic: {log.topic}, Done: {log.done}, Created At: {log.created_at}\n"
+    return reply_text
