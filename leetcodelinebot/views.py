@@ -47,7 +47,7 @@ def callback(request):
                     else:
                         line_bot_api.reply_message(
                             event.reply_token,
-                            TextSendMessage(text='未提取到數字部分')  # 回覆未提取到數字訊息
+                            TextSendMessage(text='未提取到數字部分，舉例：[完成 1]')  # 回覆未提取到數字訊息
                         )
                     
         return HttpResponse()

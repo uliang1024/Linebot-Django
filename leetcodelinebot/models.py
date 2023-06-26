@@ -1,5 +1,6 @@
 from mongoengine import *
 from datetime import datetime
+import pytz
 
 class ReportLog(Document):
     name = StringField()
@@ -19,13 +20,18 @@ class ReportLog(Document):
         'strict': False 
     }
 
+
+
 def write_to_report_log(user_name, topic, done):
     # 創建 ReportLog 物件並設定屬性值
+    # 取得當前的台灣時間
+    taiwan_tz = pytz.timezone('Asia/Taipei')
+    taiwan_time = datetime.now(taiwan_tz)
     report_log = ReportLog(
         name=user_name,
         topic=topic,
         done=done,
-        created_at=datetime.now()
+        created_at=taiwan_time
     )
     
     # 儲存 ReportLog 物件到資料庫
