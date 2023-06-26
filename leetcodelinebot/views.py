@@ -8,7 +8,9 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
 from leetcodelinebot.models import ReportLog, write_to_report_log
+from datetime import datetime, timedelta
 
+import pytz
 import re
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
@@ -29,11 +31,12 @@ def callback(request):
  
         for event in events:
             if isinstance(event, MessageEvent):  # 如果有訊息事件
-                if event.message.text == '資料':
-                    reply_text = get_report_logs()  # 调用函数获取 ReportLog 数据
+                if event.message.text == '查詢紀錄':
+                    user_id = event.source.user_id
+                    reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=reply_text)  # 构建回复消息
+                        TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
                 elif event.message.text.startswith('完成'):
                     topic = extract_topic_from_message(event.message.text)
@@ -54,11 +57,19 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-def get_report_logs():
-    all_logs = ReportLog.objects.all()
-    reply_text = ""
-    for log in all_logs:
-        reply_text += f"Name: {log.name}, Topic: {log.topic}, Done: {log.done}, Created At: {log.created_at}\n"
+def get_report_stats(user_id):
+    taiwan_tz = pytz.timezone('Asia/Taipei')
+    now = datetime.now(taiwan_tz)
+    today = now.date()
+    start_of_day = datetime.combine(today, datetime.min.time())
+    end_of_day = datetime.combine(today, datetime.max.time())
+
+    all_logs = ReportLog.objects(name=user_id).distinct("topic")
+    total_count = ReportLog.objects(name=user_id).count()
+    today_count = ReportLog.objects(name=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).count()
+
+    reply_text = f"過去總共完成了{total_count}題測驗，今日已完成{today_count}題"
+
     return reply_text
 
 def extract_topic_from_message(message):
