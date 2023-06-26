@@ -64,21 +64,26 @@ def get_report_stats(user_id):
     start_of_day = datetime.combine(today, datetime.min.time())
     end_of_day = datetime.combine(today, datetime.max.time())
 
-    all_logs = ReportLog.objects(name=user_id).distinct("topic")
-    total_count = ReportLog.objects(name=user_id).count()
-    today_count = ReportLog.objects(name=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).count()
+    all_topics = ReportLog.objects(name=user_id).distinct("topic")
+    total_count = len(all_topics)
+    
+    today_topics = ReportLog.objects(name=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).distinct("topic")
+    today_count = len(today_topics)
 
     reply_text = f"過去總共完成了{total_count}題測驗，今日已完成{today_count}題"
 
     return reply_text
 
 def extract_topic_from_message(message):
+    # 刪除所有空格
+    message = message.replace(" ", "")
+    
     # 使用正則表達式提取數字部分
-    match = re.search(r'\b完成\s+(\d+)\b', message)
+    match = re.search(r'完成(\d+)|(\d+)完成', message)
     
     if match:
         # 提取到數字部分，回傳作為 topic
-        topic = match.group(1)
+        topic = match.group(1) or match.group(2)
         return topic
     
     # 若未提取到數字部分，回傳 None
