@@ -7,7 +7,9 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from leetcodelinebot.models import ReportLog
+from leetcodelinebot.models import ReportLog, write_to_report_log
+
+import re
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -33,6 +35,21 @@ def callback(request):
                         event.reply_token,
                         TextSendMessage(text=reply_text)  # 构建回复消息
                     )
+                elif event.message.text.startswith('完成'):
+                    topic = extract_topic_from_message(event.message.text)
+                    if topic is not None:
+                        # 建立 ReportLog 物件並保存到資料庫
+                        write_to_report_log(user_name=event.source.user_id, topic=topic, done=True)
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text='已新增 ReportLog 資料')  # 回覆新增成功訊息
+                        )
+                    else:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text='未提取到數字部分')  # 回覆未提取到數字訊息
+                        )
+                    
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
@@ -43,3 +60,15 @@ def get_report_logs():
     for log in all_logs:
         reply_text += f"Name: {log.name}, Topic: {log.topic}, Done: {log.done}, Created At: {log.created_at}\n"
     return reply_text
+
+def extract_topic_from_message(message):
+    # 使用正則表達式提取數字部分
+    match = re.search(r'\b完成\s+(\d+)\b', message)
+    
+    if match:
+        # 提取到數字部分，回傳作為 topic
+        topic = match.group(1)
+        return topic
+    
+    # 若未提取到數字部分，回傳 None
+    return None
