@@ -42,10 +42,10 @@ def callback(request):
                     topic = extract_topic_from_message(event.message.text)
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
-                        write_to_report_log(user_name=event.source.user_id, topic=topic, done=True)
+                        reply_text = write_to_report_log(user_name=event.source.user_id, topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
-                            TextSendMessage(text='已新增 ReportLog 資料')  # 回覆新增成功訊息
+                            TextSendMessage(text=reply_text)  # 回覆新增成功訊息
                         )
                     else:
                         line_bot_api.reply_message(
