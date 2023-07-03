@@ -53,7 +53,7 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
-                elif event.message.text == '【IFTTT】以下為過去24小時完成題目數，請繼續完成今日的進度。':
+                elif event.message.text == '【IFTTT】 以下為過去24小時完成題目數：':
                     reply_text = get_past_24_hours_stats()  # 呼叫函式取得過去24小時完成題目數統計
                     line_bot_api.reply_message(
                         event.reply_token,
@@ -125,5 +125,7 @@ def get_past_24_hours_stats():
         
         # 構建回覆訊息
         reply_text += f"{user_name}：{count} 題\n"
+    
+    reply_text += '請繼續完成今日的進度。'
     
     return reply_text
