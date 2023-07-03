@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 import pytz
 import re
+from pytz import timezone
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -52,6 +53,13 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
+                elif event.message.text == '【IFTTT】以下為過去24小時完成題目數，請繼續完成今日的進度。':
+                    reply_text = get_past_24_hours_stats()  # 呼叫函式取得過去24小時完成題目數統計
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=reply_text)  # 構建回覆訊息
+                    )
+                    
                     
         return HttpResponse()
     else:
@@ -88,3 +96,26 @@ def extract_topic_from_message(message):
     
     # 若未提取到數字部分，回傳 None
     return None
+
+def get_past_24_hours_stats():
+    # 取得台灣時區
+    taiwan_tz = timezone('Asia/Taipei')
+    # 取得過去24小時的起始時間和結束時間
+    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
+    end_time = datetime.now(taiwan_tz)
+    
+    # 查詢過去24小時內完成題目的使用者和題目數量
+    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
+        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
+    ])
+    
+    reply_text = "【IFTTT】以下為過去24小時完成題目數，請繼續完成今日的進度。\n"
+    
+    for entry in result:
+        user_id = entry["_id"]
+        count = entry["count"]
+        
+        # 構建回覆訊息
+        reply_text += f"{user_id}：{count} 題\n"
+    
+    return reply_text
