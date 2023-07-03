@@ -109,13 +109,21 @@ def get_past_24_hours_stats():
         {"$group": {"_id": "$name", "count": {"$sum": 1}}}
     ])
     
-    reply_text = "【IFTTT】以下為過去24小時完成題目數，請繼續完成今日的進度。\n"
+    reply_text = ""
     
     for entry in result:
         user_id = entry["_id"]
         count = entry["count"]
+
+        try:
+            # 使用 LINE Bot API 的 get_profile 方法取得使用者資訊
+            profile = line_bot_api.get_profile(user_id)
+            user_name = profile.display_name
+        except LineBotApiError as e:
+            # 若取得使用者資訊失敗，則使用使用者的 user_id
+            user_name = user_id[:4] + "..."
         
         # 構建回覆訊息
-        reply_text += f"{user_id}：{count} 題\n"
+        reply_text += f"{user_name}：{count} 題\n"
     
     return reply_text
