@@ -14,6 +14,8 @@ import pytz
 import re
 from pytz import timezone
 
+import time
+
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
@@ -120,7 +122,7 @@ while True:
     # 获取当前台湾时间
     tz = pytz.timezone('Asia/Taipei')
     current_time = datetime.now(tz).time()
-    trigger_time = time(4, 50)  # 设置触发时间为上午4点30分
+    trigger_time = time(4, 52)  # 设置触发时间为上午4点30分
 
     if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
         reply_text = get_past_24_hours_stats() 
