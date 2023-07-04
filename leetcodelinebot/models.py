@@ -25,7 +25,7 @@ class ReportLog(Document):
 
 
 
-def write_to_report_log(user_id, user_name, topic, done):
+def write_to_report_log(user_id, name, topic, done):
     # 检查是否已存在相同用户和相同topic的记录
     existing_log = ReportLog.objects(user_id=user_id, topic=topic).first()
 
@@ -41,7 +41,7 @@ def write_to_report_log(user_id, user_name, topic, done):
     # 创建ReportLog对象并设置属性值
     report_log = ReportLog(
         user_id=user_id,
-        name=user_name,
+        name=name,
         topic=topic,
         done=done,
         created_at=taiwan_time

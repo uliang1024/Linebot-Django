@@ -46,8 +46,7 @@ def callback(request):
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
                         profile = line_bot_api.get_profile(event.source.user_id)
-                        user_name = profile.display_name  # 获取用户的显示名称
-                        reply_text = write_to_report_log(id=event.source.user_id, name=user_name, topic=topic, done=True)
+                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile.displayName, topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=reply_text)  # 回覆新增成功訊息
@@ -103,17 +102,17 @@ def get_past_24_hours_stats():
     
     # 查詢過去24小時內完成題目的使用者和題目數量
     result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"name": "$name", "count": {"$sum": 1}}}
+        {"$group": {"user_id": "$user_id", "count": {"$sum": 1}}}
     ])
     
     reply_text = ""
     
     for entry in result:
-        name = entry["name"]
+        user_id = entry["user_id"]
         count = entry["count"]
         
         # 構建回覆訊息
-        reply_text += f"{name}：{count} 題\n"
+        reply_text += f"{user_id}：{count} 題\n"
     
     reply_text += '請繼續完成今日的進度。'
     
