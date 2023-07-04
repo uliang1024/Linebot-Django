@@ -7,13 +7,9 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from leetcodelinebot.models import ReportLog, write_to_report_log, send_line_message
-from datetime import datetime, timedelta
+from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message
 
 import pytz
-import re
-from pytz import timezone
-
 import datetime
 import time
 
@@ -61,63 +57,6 @@ def callback(request):
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
-
-def get_report_stats(user_id):
-    taiwan_tz = pytz.timezone('Asia/Taipei')
-    now = datetime.now(taiwan_tz)
-    today = now.date()
-    start_of_day = datetime.combine(today, datetime.min.time())
-    end_of_day = datetime.combine(today, datetime.max.time())
-
-    all_topics = ReportLog.objects(user_id=user_id).distinct("topic")
-    total_count = len(all_topics)
-    
-    today_topics = ReportLog.objects(user_id=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).distinct("topic")
-    today_count = len(today_topics)
-
-    reply_text = f"過去總共完成了{total_count}題測驗，今日已完成{today_count}題"
-
-    return reply_text
-
-def extract_topic_from_message(message):
-    # 刪除所有空格
-    message = message.replace(" ", "")
-    
-    # 使用正則表達式提取數字部分
-    match = re.search(r'完成(\d+)|(\d+)完成', message)
-    
-    if match:
-        # 提取到數字部分，回傳作為 topic
-        topic = match.group(1) or match.group(2)
-        return topic
-    
-    # 若未提取到數字部分，回傳 None
-    return None
-
-def get_past_24_hours_stats():
-    # 取得台灣時區
-    taiwan_tz = timezone('Asia/Taipei')
-    # 取得過去24小時的起始時間和結束時間
-    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
-    end_time = datetime.now(taiwan_tz)
-    
-    # 查詢過去24小時內完成題目的使用者和題目數量
-    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"user_id": "$user_id", "count": {"$sum": 1}}}
-    ])
-    
-    reply_text = ""
-    
-    for entry in result:
-        user_id = entry["user_id"]
-        count = entry["count"]
-        
-        # 構建回覆訊息
-        reply_text += f"{user_id}：{count} 題\n"
-    
-    reply_text += '請繼續完成今日的進度。'
-    
-    return reply_text
 
 while True:
     # 获取当前台湾时间
