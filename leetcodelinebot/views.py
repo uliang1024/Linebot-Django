@@ -7,12 +7,14 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from leetcodelinebot.models import ReportLog, write_to_report_log
+from leetcodelinebot.models import ReportLog, write_to_report_log, send_line_message
 from datetime import datetime, timedelta
 
 import pytz
 import re
 from pytz import timezone
+
+import time
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -43,7 +45,9 @@ def callback(request):
                     topic = extract_topic_from_message(event.message.text)
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
-                        reply_text = write_to_report_log(user_name=event.source.user_id, topic=topic, done=True)
+                        profile = line_bot_api.get_profile(event.source.user_id)
+                        user_name = profile.display_name  # 获取用户的显示名称
+                        reply_text = write_to_report_log(id=event.source.user_id, name=user_name, topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=reply_text)  # 回覆新增成功訊息
@@ -53,12 +57,6 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
-                elif event.message.text == '【IFTTT】 以下為過去24小時完成題目數：':
-                    reply_text = get_past_24_hours_stats()  # 呼叫函式取得過去24小時完成題目數統計
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)  # 構建回覆訊息
-                    )
                     
         return HttpResponse()
     else:
@@ -71,10 +69,10 @@ def get_report_stats(user_id):
     start_of_day = datetime.combine(today, datetime.min.time())
     end_of_day = datetime.combine(today, datetime.max.time())
 
-    all_topics = ReportLog.objects(name=user_id).distinct("topic")
+    all_topics = ReportLog.objects(user_id=user_id).distinct("topic")
     total_count = len(all_topics)
     
-    today_topics = ReportLog.objects(name=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).distinct("topic")
+    today_topics = ReportLog.objects(user_id=user_id, created_at__gte=start_of_day, created_at__lte=end_of_day).distinct("topic")
     today_count = len(today_topics)
 
     reply_text = f"過去總共完成了{total_count}題測驗，今日已完成{today_count}題"
@@ -105,62 +103,31 @@ def get_past_24_hours_stats():
     
     # 查詢過去24小時內完成題目的使用者和題目數量
     result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
+        {"$group": {"name": "$name", "count": {"$sum": 1}}}
     ])
     
     reply_text = ""
     
     for entry in result:
-        user_id = entry["_id"]
+        name = entry["name"]
         count = entry["count"]
-
-        try:
-            # 使用 LINE Bot API 的 get_profile 方法取得使用者資訊
-            profile = line_bot_api.get_profile(user_id)
-            user_name = profile.display_name
-        except LineBotApiError as e:
-            # 若取得使用者資訊失敗，則使用使用者的 user_id
-            user_name = user_id[:4] + "..." + e
         
         # 構建回覆訊息
-        reply_text += f"{user_name}：{count} 題\n"
+        reply_text += f"{name}：{count} 題\n"
     
     reply_text += '請繼續完成今日的進度。'
     
     return reply_text
 
-# import time
-# from pymongo import MongoClient
-# import requests
+while True:
+    # 获取当前台湾时间
+    tz = pytz.timezone('Asia/Taipei')
+    current_time = datetime.datetime.now(tz).time()
+    trigger_time = datetime.time(4, 30)  # 设置触发时间为上午4点30分
 
-# def send_line_message(message):
-#     url = "https://notify-api.line.me/api/notify"
-#     headers = {
-#         "Authorization": "Bearer " + '3t3o0JGWlcQfcv21kc4IBdM6uyyPlVhBSgxQOZTFNUM',
-#         "Content-Type": "application/x-www-form-urlencoded"
-#     }
-#     params = {
-#         'message': message
-#     }
-#     response = requests.post(url, headers=headers, params=params)
-#     if response.status_code == 200:
-#         print("Line message sent successfully.")
-#     else:
-#         print("Failed to send Line message.")
-
-# # 连接到MongoDB数据库
-# client = MongoClient("mongodb+srv://amisleo000:AMISleo123@cluster0.3dwwur1.mongodb.net")
-
-# # 选择数据库和集合
-# db = client["linebot"]
-# collection = db["ReportLog"]
-
-# while True:
-#     # 从MongoDB读取数据
-#     data = collection.find()
-#     for document in data:
-#         # 获取需要发送的消息内容
-#         message = document['name']
-#         # 发送Line消息
-#         send_line_message(message)
-#     time.sleep(20)
+    if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
+        
+        reply_text = get_past_24_hours_stats() 
+        send_line_message(reply_text)
+    
+    time.sleep(5)  # 每分钟检查一次时间
