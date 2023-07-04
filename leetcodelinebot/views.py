@@ -58,14 +58,14 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-while True:
-    # 获取当前台湾时间
-    tz = pytz.timezone('Asia/Taipei')
-    current_time = datetime.datetime.now().time()
-    trigger_time = datetime.time(4, 58)  # 设置触发时间为上午4点30分
+# while True:
+#     # 获取当前台湾时间
+#     tz = pytz.timezone('Asia/Taipei')
+#     current_time = datetime.datetime.now().time()
+#     trigger_time = datetime.time(4, 58)  # 设置触发时间为上午4点30分
 
-    if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
-        reply_text = get_past_24_hours_stats() 
-        send_line_message(reply_text)
+#     if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
+#         reply_text = get_past_24_hours_stats() 
+#         send_line_message(reply_text)
     
-    time.sleep(5)  # 每分钟检查一次时间
+#     time.sleep(5)  # 每分钟检查一次时间
