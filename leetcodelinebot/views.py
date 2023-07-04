@@ -60,7 +60,6 @@ def callback(request):
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
                     
-                    
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
@@ -121,7 +120,7 @@ def get_past_24_hours_stats():
             user_name = profile.display_name
         except LineBotApiError as e:
             # 若取得使用者資訊失敗，則使用使用者的 user_id
-            user_name = user_id[:4] + "..."
+            user_name = user_id[:4] + "..." + e
         
         # 構建回覆訊息
         reply_text += f"{user_name}：{count} 題\n"

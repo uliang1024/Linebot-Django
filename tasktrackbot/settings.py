@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'django_apscheduler',
     'leetcodelinebot.apps.LeetcodelinebotConfig',
     'rest_framework',
     'rest_framework_mongoengine',
