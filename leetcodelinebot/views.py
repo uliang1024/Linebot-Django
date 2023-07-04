@@ -8,12 +8,13 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
 from leetcodelinebot.models import ReportLog, write_to_report_log, send_line_message
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
 import pytz
 import re
 from pytz import timezone
 
+import datetime
 import time
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
@@ -121,8 +122,8 @@ def get_past_24_hours_stats():
 while True:
     # 获取当前台湾时间
     tz = pytz.timezone('Asia/Taipei')
-    current_time = datetime.now(tz).time()
-    trigger_time = time(4, 52)  # 设置触发时间为上午4点30分
+    current_time = datetime.datetime.now().time()
+    trigger_time = datetime.time(4, 58)  # 设置触发时间为上午4点30分
 
     if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
         reply_text = get_past_24_hours_stats() 
