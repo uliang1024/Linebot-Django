@@ -74,23 +74,26 @@ def get_past_24_hours_stats():
     # 取得台灣時區
     taiwan_tz = timezone('Asia/Taipei')
     # 取得過去24小時的起始時間和結束時間
-    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
     end_time = datetime.now(taiwan_tz)
-
+    start_time = end_time - timedelta(hours=24)
+    
     # 查詢過去24小時內完成題目的使用者和題目數量
-    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time, done=True).item_frequencies('user_id')
-
+    result = ReportLog.objects(Q(created_at__gte=start_time) & Q(created_at__lt=end_time)).aggregate([
+        {"$match": {"done": True}},
+        {"$group": {"_id": "$user_id", "count": {"$sum": "$topic"}}}
+    ])
+    
     reply_text = ""
-
-    for user_id, count in result.items():
-        user = ReportLog.objects(user_id=user_id).first()
-        if user:
-            name = user.name
-            # 構建回覆訊息
-            reply_text += f"{name}：{count} 題\n"
-
+    
+    for entry in result:
+        user_id = entry["_id"]
+        count = entry["count"]
+        
+        # 構建回覆訊息
+        reply_text += f"{user_id}：{count} 題\n"
+    
     reply_text += '請繼續完成今日的進度。'
-
+    
     return reply_text
 
 
