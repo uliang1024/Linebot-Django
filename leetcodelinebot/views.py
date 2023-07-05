@@ -121,13 +121,13 @@ while True:
     now = datetime.datetime.now(taipei_tz)
     
     # 检查当前时间是否是早上八点、下午两点或晚上十点
-    if now.hour == 21 and now.minute ==28 and now.second == 0:
+    if now.hour == 8 and now.minute == 0 and now.second == 0:
         text = settlement_event() 
         send_line_message(text)
     elif now.hour == 14 and now.minute == 0 and now.second == 0:
         text = reminder_event()
         send_line_message(text)
-    elif now.hour == 21 and now.minute == 25 and now.second == 0:
+    elif now.hour == 22 and now.minute == 0 and now.second == 0:
         text = report_event()
         send_line_message(text)
     
