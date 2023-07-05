@@ -55,12 +55,15 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
+                elif event.message.text == '測試':
+                    text = get_past_24_hours_stats() 
+                    send_line_message(text)
                     
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
 
-while True:
-    text = get_past_24_hours_stats() 
-    send_line_message(text)
-    time.sleep(60)
+# while True:
+#     text = get_past_24_hours_stats() 
+#     send_line_message(text)
+#     time.sleep(60)
