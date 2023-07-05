@@ -186,6 +186,8 @@ def report_event():
     reply_text += "⬇️目前尚未回報的有⬇️\n"
     reply_text += "-----------------------------\n"
 
+    nobody = False
+
     for entry in result:
         user_id = entry["_id"]
         count = int(entry["count"])
@@ -194,8 +196,13 @@ def report_event():
         if count < 1:
             # 构建回复消息
             reply_text += f"{user_id} 尚未回報\n"
+            nobody = True
 
     reply_text += "-----------------------------\n"
     reply_text += '我看你們等著請客吧 哈'
+
+    if not nobody:
+        reply_text = "🎉恭喜各位都已完成今日目標\n"
+        reply_text += "明天請繼續努力💪💪"
 
     return reply_text
