@@ -10,6 +10,13 @@ from linebot import LineBotApi
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 
+class Users(Document):
+    user_id = StringField(required=True)
+    display_name = StringField()
+    status_message = StringField()
+    picture_url = StringField()
+    punish = IntField(default=0)
+    
 class ReportLog(Document):
     user_id = StringField()
     name = StringField()
@@ -186,7 +193,7 @@ def report_event():
     reply_text += "⬇️目前尚未回報的有⬇️\n"
     reply_text += "-----------------------------\n"
 
-    nobody = False
+    anybody = True
 
     for entry in result:
         user_id = entry["_id"]
@@ -196,12 +203,12 @@ def report_event():
         if count < 1:
             # 构建回复消息
             reply_text += f"{user_id} 尚未回報\n"
-            nobody = True
+            anybody = False
 
     reply_text += "-----------------------------\n"
     reply_text += '我看你們等著請客吧 哈'
 
-    if not nobody:
+    if anybody:
         reply_text = "🎉恭喜各位都已完成今日目標\n"
         reply_text += "明天請繼續努力💪💪"
 
