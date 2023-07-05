@@ -29,9 +29,6 @@ class ReportLog(Document):
         'strict': False 
     }
 
-
-
-
 def write_to_report_log(user_id, name, topic, done):
     # 检查是否已存在相同用户和相同topic的记录
     existing_log = ReportLog.objects(user_id=user_id, topic=topic).first()
@@ -87,7 +84,8 @@ def get_past_24_hours_stats():
         {"$group": {"_id": "$name", "count": {"$sum": 1}}}
     ])
     
-    reply_text = ""
+    reply_text = "📢📢📢結算學員完成題數\n"
+    reply_text += "⬇️⬇️過去24小時中⬇️⬇️\n"
     
     for entry in result:
         user_id = entry["_id"]
@@ -96,7 +94,7 @@ def get_past_24_hours_stats():
         # 構建回覆訊息
         reply_text += f"{user_id}：{count} 題\n"
     
-    reply_text += '請繼續完成今日的進度。'
+    reply_text += '💪💪請繼續完成今日的進度。'
     
     return reply_text
 
