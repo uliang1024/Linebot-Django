@@ -7,7 +7,11 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
 
-from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message
+from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
+
+import datetime
+import time
+import pytz
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -58,7 +62,22 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-# while True:
-#     text = get_past_24_hours_stats() 
-#     send_line_message(text)
-#     time.sleep(60)
+# 设置台湾时区
+taipei_tz = pytz.timezone('Asia/Taipei')
+
+while True:
+    now = datetime.datetime.now(taipei_tz)
+    
+    # 检查当前时间是否是早上八点、下午两点或晚上十点
+    if now.hour == 17 and now.minute == 13 and now.second == 0:
+        text = settlement_event() 
+        send_line_message(text)
+    elif now.hour == 17 and now.minute == 14 and now.second == 0:
+        text = reminder_event()
+        send_line_message(text)
+    elif now.hour == 17 and now.minute == 15 and now.second == 0:
+        text = report_event()
+        send_line_message(text)
+    
+    # 等待1秒钟，避免频繁检查
+    time.sleep(1)
