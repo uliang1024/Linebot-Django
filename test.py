@@ -1,10 +1,10 @@
 import requests
 
 # LINE Notify 權杖
-token = 'BuiLxcTrO3CXKILS5eeuVFouuLRn8fk47V6qJfsEkcw'
+token = 'j6CgXLdrQZKfZRmhWG58cqLyBm13rjsR0GaI2Hz7oxU'
 
 # 要發送的訊息
-message = '嗨'
+message = '你朋友怪怪的'
 
 # HTTP 標頭參數與資料
 headers = { "Authorization": "Bearer " + token }
@@ -24,4 +24,4 @@ files = {'imageFile': image_content}
 
 # 以 requests 發送 POST 請求
 requests.post("https://notify-api.line.me/api/notify",
-    headers = headers, data = data, files = files)
+    headers = headers, data = data)

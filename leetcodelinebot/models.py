@@ -10,12 +10,12 @@ from linebot import LineBotApi
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 
-class Users(Document):
-    user_id = StringField(required=True)
-    display_name = StringField()
-    status_message = StringField()
-    picture_url = StringField()
-    punish = IntField(default=0)
+# class Users(Document):
+#     user_id = StringField(required=True)
+#     display_name = StringField()
+#     status_message = StringField()
+#     picture_url = StringField()
+#     punish = IntField(default=0)
     
 class ReportLog(Document):
     user_id = StringField()
@@ -67,7 +67,7 @@ def write_to_report_log(user_id, name, topic, done):
 def send_line_message(message):
     url = "https://notify-api.line.me/api/notify"
     headers = {
-        "Authorization": "Bearer " + 'BuiLxcTrO3CXKILS5eeuVFouuLRn8fk47V6qJfsEkcw',
+        "Authorization": "Bearer " + 'j6CgXLdrQZKfZRmhWG58cqLyBm13rjsR0GaI2Hz7oxU',
         "Content-Type": "application/x-www-form-urlencoded"
     }
     params = {
@@ -190,26 +190,26 @@ def report_event():
     ])
 
     reply_text = "❗請記得回報今日進度❗\n"
-    reply_text += "⬇️目前尚未回報的有⬇️\n"
-    reply_text += "-----------------------------\n"
+    # reply_text += "⬇️目前尚未回報的有⬇️\n"
+    # reply_text += "-----------------------------\n"
 
-    anybody = True
+    # anybody = True
 
-    for entry in result:
-        user_id = entry["_id"]
-        count = int(entry["count"])
+    # for entry in result:
+    #     user_id = entry["_id"]
+    #     count = int(entry["count"])
 
-        # 仅在count小于0时显示记录
-        if count < 1:
-            # 构建回复消息
-            reply_text += f"{user_id} 尚未回報\n"
-            anybody = False
+    #     # 仅在count小于0时显示记录
+    #     if count < 1:
+    #         # 构建回复消息
+    #         reply_text += f"{user_id} 尚未回報\n"
+    #         anybody = False
 
-    reply_text += "-----------------------------\n"
-    reply_text += '我看你們等著請客吧 哈'
+    # reply_text += "-----------------------------\n"
+    # reply_text += '我看你們等著請客吧 哈'
 
-    if anybody:
-        reply_text = "🎉恭喜各位都已完成今日目標\n"
-        reply_text += "明天請繼續努力💪💪"
+    # if anybody:
+    #     reply_text = "🎉恭喜各位都已完成今日目標\n"
+    #     reply_text += "明天請繼續努力💪💪"
 
     return reply_text

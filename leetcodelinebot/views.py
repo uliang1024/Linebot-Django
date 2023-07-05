@@ -7,7 +7,7 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
 
-from leetcodelinebot.models import Users, write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
+from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
 
 import datetime
 import time
@@ -30,7 +30,26 @@ def callback(request):
             return HttpResponseBadRequest()
  
         for event in events:
-            # if isinstance(event, FollowEvent):  # 如果是加好友事件
+            # if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
+            #     group_id = event.source.group_id  # 群組ID
+            #     user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
+            #     # 將每個使用者ID新增至MongoDB的UsersCollection
+            #     for user_id in user_ids:
+            #         profile = line_bot_api.get_profile(user_id)
+            #         user = Users(
+            #             user_id = user_id,
+            #             display_name = profile.display_name,
+            #             status_message = profile.status_message,
+            #             picture_url = profile.picture_url,
+            #             # 其他使用者相關的欄位值
+            #         )
+            #         user.save()  # 將使用者物件保存至MongoDB的UsersCollection
+
+            #     line_bot_api.reply_message(
+            #         event.reply_token,
+            #         TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
+            #     )
+            # elif isinstance(event, FollowEvent):  # 如果是加好友事件
             #     user_id = event.source.user_id
             #     profile = line_bot_api.get_profile(user_id)
 
@@ -90,25 +109,6 @@ def callback(request):
                 elif event.message.text == '測試':
                     text = get_past_24_hours_stats() 
                     send_line_message(text)
-                elif event.message.text == '新增':
-                    group_id = event.source.group_id  # 群組ID
-                    user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
-                    # 將每個使用者ID新增至MongoDB的UsersCollection
-                    for user_id in user_ids:
-                        profile = line_bot_api.get_profile(user_id)
-                        user = Users(
-                            user_id = user_id,
-                            display_name = profile.display_name,
-                            status_message = profile.status_message,
-                            picture_url = profile.picture_url,
-                            # 其他使用者相關的欄位值
-                        )
-                        user.save()  # 將使用者物件保存至MongoDB的UsersCollection
-
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
-                    )
                     
         return HttpResponse()
     else:
@@ -127,7 +127,7 @@ while True:
     elif now.hour == 14 and now.minute == 0 and now.second == 0:
         text = reminder_event()
         send_line_message(text)
-    elif now.hour == 17 and now.minute == 58 and now.second == 0:
+    elif now.hour == 22 and now.minute == 0 and now.second == 0:
         text = report_event()
         send_line_message(text)
     
