@@ -38,7 +38,7 @@ def callback(request):
                         event.reply_token,
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
-                elif event.message.text.startswith('完成'):
+                elif event.message.text is not None and event.message.text.startswith('完成'):
                     topic = extract_topic_from_message(event.message.text)
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
@@ -75,7 +75,7 @@ while True:
     elif now.hour == 17 and now.minute == 14 and now.second == 0:
         text = reminder_event()
         send_line_message(text)
-    elif now.hour == 17 and now.minute == 15 and now.second == 0:
+    elif now.hour == 17 and now.minute == 22 and now.second == 0:
         text = report_event()
         send_line_message(text)
     
