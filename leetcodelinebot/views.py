@@ -107,7 +107,7 @@ def callback(request):
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
                 elif event.message.text == '測試':
-                    text = get_past_24_hours_stats() 
+                    text = settlement_event() 
                     send_line_message(text)
                     
         return HttpResponse()
