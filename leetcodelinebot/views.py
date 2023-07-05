@@ -42,7 +42,9 @@ def callback(request):
                     topic = extract_topic_from_message(event.message.text)
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
-                        profile = line_bot_api.get_profile(event.source.user_id)
+                        user_id = event.source.user_id
+                        profile = line_bot_api.get_profile(user_id)
+                        print(profile)
                         reply_text = write_to_report_log(user_id=event.source.user_id, name=profile.displayName, topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
