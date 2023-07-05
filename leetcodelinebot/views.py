@@ -44,7 +44,7 @@ def callback(request):
                         # 建立 ReportLog 物件並保存到資料庫
                         user_id = event.source.user_id
                         profile = line_bot_api.get_profile(user_id)
-                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile, topic=topic, done=True)
+                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile.display_name, topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=reply_text)  # 回覆新增成功訊息
