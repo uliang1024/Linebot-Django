@@ -60,20 +60,7 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-def job():
-    # 取得台灣時區
-    taiwan_tz = pytz.timezone('Asia/Taipei')
-    current_time = datetime.now(taiwan_tz)
-    
-    # 檢查是否為下午2點
-    if current_time.hour == 14 and current_time.minute == 0:
-        # 在這裡放置要執行的程式碼
-        reply_text = get_past_24_hours_stats() 
-        send_line_message(reply_text)
-
-# 設定每分鐘執行任務
-schedule.every().minute.do(job)
-
 while True:
-    schedule.run_pending()
-    time.sleep(1)
+    reply_text = get_past_24_hours_stats() 
+    send_line_message(reply_text)
+    time.sleep(20)
