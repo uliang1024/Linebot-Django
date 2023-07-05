@@ -4,14 +4,14 @@ import requests
 token = '2mAwsfJA5lUwigyy5hUeDhnIb1GbYv1CzgmMff6cLFn'
 
 # 要發送的訊息
-message = '你朋友怪怪的'
+message = '嗨'
 
 # HTTP 標頭參數與資料
 headers = { "Authorization": "Bearer " + token }
 data = { 'message': message }
 
 # 远程图片的 URL
-image_url = 'https://img.onl/OeBvA4'
+image_url = 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcQkrjYxSfSHeCEA7hkPy8e2JphDsfFHZVKqx-3t37E4XKr-AT7DML8IwtwY0TnZsUcQ'
 
 # 发送 HTTP GET 请求获取图片内容
 response = requests.get(image_url)
@@ -24,4 +24,4 @@ files = {'imageFile': image_content}
 
 # 以 requests 發送 POST 請求
 requests.post("https://notify-api.line.me/api/notify",
-    headers = headers, data = data)
+    headers = headers, data = data, files = files)

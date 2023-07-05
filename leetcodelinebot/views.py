@@ -127,7 +127,7 @@ while True:
     elif now.hour == 14 and now.minute == 0 and now.second == 0:
         text = reminder_event()
         send_line_message(text)
-    elif now.hour == 22 and now.minute == 0 and now.second == 0:
+    elif now.hour == 21 and now.minute == 25 and now.second == 0:
         text = report_event()
         send_line_message(text)
     
