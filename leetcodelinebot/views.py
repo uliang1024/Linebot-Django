@@ -61,6 +61,6 @@ def callback(request):
         return HttpResponseBadRequest()
 
 while True:
-    reply_text = get_past_24_hours_stats() 
-    send_line_message(reply_text)
+    text = get_past_24_hours_stats() 
+    send_line_message(text)
     time.sleep(20)
