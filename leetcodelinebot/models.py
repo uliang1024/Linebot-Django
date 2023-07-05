@@ -71,26 +71,26 @@ def send_line_message(message):
         print("Failed to send Line message.")
         
 def get_past_24_hours_stats():
-    # 取得台灣時區
-    taiwan_tz = timezone('Asia/Taipei')
-    # 取得過去24小時的起始時間和結束時間
-    end_time = datetime.now(taiwan_tz)
-    start_time = end_time - timedelta(hours=24)
+    # # 取得台灣時區
+    # taiwan_tz = timezone('Asia/Taipei')
+    # # 取得過去24小時的起始時間和結束時間
+    # end_time = datetime.now(taiwan_tz)
+    # start_time = end_time - timedelta(hours=24)
     
-    # 查詢過去24小時內完成題目的使用者和題目數量
-    result = ReportLog.objects(Q(created_at__gte=start_time) & Q(created_at__lt=end_time)).aggregate([
-        {"$match": {"done": True}},
-        {"$group": {"_id": "$user_id", "count": {"$sum": "$topic"}}}
-    ])
+    # # 查詢過去24小時內完成題目的使用者和題目數量
+    # result = ReportLog.objects(Q(created_at__gte=start_time) & Q(created_at__lt=end_time)).aggregate([
+    #     {"$match": {"done": True}},
+    #     {"$group": {"_id": "$user_id", "count": {"$sum": "$topic"}}}
+    # ])
     
-    reply_text = ""
+    # reply_text = ""
     
-    for entry in result:
-        user_id = entry["_id"]
-        count = entry["count"]
+    # for entry in result:
+    #     user_id = entry["_id"]
+    #     count = entry["count"]
         
-        # 構建回覆訊息
-        reply_text += f"{user_id}：{count} 題\n"
+    #     # 構建回覆訊息
+    #     reply_text += f"{user_id}：{count} 題\n"
     
     reply_text += '請繼續完成今日的進度。'
     
