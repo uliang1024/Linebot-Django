@@ -67,7 +67,7 @@ def write_to_report_log(user_id, name, topic, done):
 def send_line_message(message):
     url = "https://notify-api.line.me/api/notify"
     headers = {
-        "Authorization": "Bearer " + 'j6CgXLdrQZKfZRmhWG58cqLyBm13rjsR0GaI2Hz7oxU',
+        "Authorization": "Bearer " + '2mAwsfJA5lUwigyy5hUeDhnIb1GbYv1CzgmMff6cLFn',
         "Content-Type": "application/x-www-form-urlencoded"
     }
     params = {
