@@ -45,7 +45,7 @@ def callback(request):
                         user_id = event.source.user_id
                         profile = line_bot_api.get_profile(user_id)
                         print(profile)
-                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile.displayName, topic=topic, done=True)
+                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile['displayName'], topic=topic, done=True)
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=reply_text)  # 回覆新增成功訊息
