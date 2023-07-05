@@ -11,7 +11,7 @@ url = "https://notify-bot.line.me/oauth/token"
 # 設定請求參數
 params = {
     "grant_type": "authorization_code",
-    "code": "woVfREucvualGxBRn0OsBy",
+    "code": "pn8pZDNpRnvn7J3MgmhHUW",
     "redirect_uri": "https://tasktrackbot-amisleo000.b4a.run/notify",
     "client_id": "Z1oeGU1ZW8BmBsCoWbOCBt",
     "client_secret": "I12XId2drh03mRHo1sGsStyvNAuqZwH3sPU9lQax88c"
@@ -32,7 +32,7 @@ else:
 # def send_line_message(message):
 #     url = "https://notify-api.line.me/api/notify"
 #     headers = {
-#         "Authorization": "Bearer " + '2mAwsfJA5lUwigyy5hUeDhnIb1GbYv1CzgmMff6cLFn',
+#         "Authorization": "Bearer " + 'B7ETcX7t5qBktqBaInv1tFQZ5FWV7hMcNoNK4hTTEwA',
 #         "Content-Type": "application/x-www-form-urlencoded"
 #     }
 #     params = {

@@ -1,7 +1,7 @@
 import requests
 
 # LINE Notify 權杖
-token = '2mAwsfJA5lUwigyy5hUeDhnIb1GbYv1CzgmMff6cLFn'
+token = 'B7ETcX7t5qBktqBaInv1tFQZ5FWV7hMcNoNK4hTTEwA'
 
 # 要發送的訊息
 message = '嗨'
