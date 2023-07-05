@@ -9,9 +9,10 @@ from linebot.models import MessageEvent, TextSendMessage
 
 from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message
 
-import pytz
-import datetime
+import schedule
 import time
+from datetime import datetime
+import pytz
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -59,14 +60,20 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-# while True:
-#     # 获取当前台湾时间
-#     tz = pytz.timezone('Asia/Taipei')
-#     current_time = datetime.datetime.now().time()
-#     trigger_time = datetime.time(4, 58)  # 设置触发时间为上午4点30分
-
-#     if current_time.hour == trigger_time.hour and current_time.minute == trigger_time.minute:
-#         reply_text = get_past_24_hours_stats() 
-#         send_line_message(reply_text)
+def job():
+    # 取得台灣時區
+    taiwan_tz = pytz.timezone('Asia/Taipei')
+    current_time = datetime.now(taiwan_tz)
     
-#     time.sleep(5)  # 每分钟检查一次时间
+    # 檢查是否為下午2點
+    if current_time.hour == 14 and current_time.minute == 0:
+        # 在這裡放置要執行的程式碼
+        reply_text = get_past_24_hours_stats() 
+        send_line_message(reply_text)
+
+# 設定每分鐘執行任務
+schedule.every().minute.do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
