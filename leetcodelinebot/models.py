@@ -189,7 +189,7 @@ def report_event():
         {"$group": {"_id": "$name", "count": {"$sum": 1}}}
     ])
 
-    reply_text = "❗請記得回報今日進度❗\n"
+    reply_text = "❗請記得回報今日進度❗"
     # reply_text += "⬇️目前尚未回報的有⬇️\n"
     # reply_text += "-----------------------------\n"
 
