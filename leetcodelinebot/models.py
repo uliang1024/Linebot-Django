@@ -35,7 +35,7 @@ def write_to_report_log(user_id, name, topic, done):
 
     if existing_log:
         # 若已存在记录，回复相应消息
-        reply_text = f"第{topic}题您已经完成了，请换个题目"
+        reply_text = f"第{topic}題您已經完成了，請更換題目"
         return reply_text
 
     # 取得当前的台湾时间
