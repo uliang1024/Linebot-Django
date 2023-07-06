@@ -4,14 +4,14 @@ import requests
 token = 'q3KwMlbfH3Upxw7FiaYlaopFyJwlHK3tKnOuLnaGhmI'
 
 # 要發送的訊息
-message = '嗨'
+message = '我真的好累了'
 
 # HTTP 標頭參數與資料
 headers = { "Authorization": "Bearer " + token }
 data = { 'message': message }
 
 # 远程图片的 URL
-image_url = 'https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcQkrjYxSfSHeCEA7hkPy8e2JphDsfFHZVKqx-3t37E4XKr-AT7DML8IwtwY0TnZsUcQ'
+image_url = 'https://img.onl/LSQpWr'
 
 # 发送 HTTP GET 请求获取图片内容
 response = requests.get(image_url)

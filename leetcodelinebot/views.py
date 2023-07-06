@@ -208,8 +208,8 @@ scheduler = BlockingScheduler()
 # 设置台湾时区
 taipei_tz = timezone('Asia/Taipei')
 # 添加定时任务，并设置触发时间（台湾时间）
-scheduler.add_job(settlement_event, 'cron', hour=14, minute=3, second=0, timezone=taipei_tz)
-scheduler.add_job(reminder_event, 'cron', hour=14, minute=10, second=0, timezone=taipei_tz)
-scheduler.add_job(report_event, 'cron', hour=14, minute=12, second=0, timezone=taipei_tz)
+scheduler.add_job(settlement_event, 'cron', hour=8, minute=0, second=0, timezone=taipei_tz)
+scheduler.add_job(reminder_event, 'cron', hour=14, minute=0, second=0, timezone=taipei_tz)
+scheduler.add_job(report_event, 'cron', hour=22, minute=0, second=0, timezone=taipei_tz)
 # 启动调度器
 scheduler.start()
