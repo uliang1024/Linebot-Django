@@ -7,7 +7,7 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
 
-from leetcodelinebot.models import write_to_report_log, get_report_stats, send_line_message, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
+from leetcodelinebot.models import write_to_report_log, get_report_stats, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
 
 import datetime
 import time
