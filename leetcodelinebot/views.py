@@ -10,7 +10,7 @@ from linebot import LineBotApi
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
-from leetcodelinebot.urls import send_line_message
+from leetcodelinebot.line_notify import send_line_message
 from leetcodelinebot.scheduler_script import scheduler_event
 from datetime import datetime, timedelta
 from pytz import timezone
