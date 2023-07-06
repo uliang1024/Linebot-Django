@@ -139,15 +139,15 @@ while True:
     now = datetime.datetime.now(taipei_tz)
     
     # 检查当前时间是否是早上八点、下午两点或晚上十点
-    if now.hour == 10 and now.minute == 55 and now.second == 0:
-        text = settlement_event() 
-        send_line_message(text)
-    elif now.hour == 10 and now.minute == 56 and now.second == 0:
-        text = reminder_event()
-        send_line_message(text)
-    elif now.hour == 10 and now.minute == 57 and now.second == 0:
-        text = report_event()
-        send_line_message(text)
+    if now.hour == 11 and now.minute == 0 and now.second == 0:
+        textHey = settlement_event() 
+        send_line_message(textHey)
+    elif now.hour == 11 and now.minute == 1 and now.second == 0:
+        textHey = reminder_event()
+        send_line_message(textHey)
+    elif now.hour == 11 and now.minute == 2 and now.second == 0:
+        textHey = report_event()
+        send_line_message(textHey)
     
     # 等待1秒钟，避免频繁检查
     time.sleep(1)
