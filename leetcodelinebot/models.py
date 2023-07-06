@@ -77,7 +77,7 @@ def send_line_message(message):
     if response.status_code == 200:
         print("Line message sent successfully.")
     else:
-        print("Failed to send Line message.")
+        print("Failed to send Line message." + response.status_code)
         
 def get_past_24_hours_stats():
     # 取得台灣時區
