@@ -22,7 +22,7 @@ parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 def send_line_message(message):
     url = "https://notify-api.line.me/api/notify"
     headers = {
-        "Authorization": "Bearer " + 'B7ETcX7t5qBktqBaInv1tFQZ5FWV7hMcNoNK4hTTEwA',
+        "Authorization": "Bearer " + '9G8bA90XiyYVaT0HUktLP5VksmEfkcmeDUNFdEfNZWH',
         "Content-Type": "application/x-www-form-urlencoded"
     }
     params = {
