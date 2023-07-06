@@ -8,13 +8,11 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
 
 from leetcodelinebot.models import Users, ReportLog, write_to_report_log, get_report_stats, extract_topic_from_message
-
+from leetcodelinebot.scheduler_script import scheduler_event
 from datetime import datetime, timedelta
 from pytz import timezone
 
 import requests
-
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -206,17 +204,5 @@ def callback(request):
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
-
-# 创建一个调度器对象
-scheduler = BlockingScheduler()
-
-# 设置台湾时区
-taipei_tz = timezone('Asia/Taipei')
-
-# 添加定时任务，并设置触发时间（台湾时间）
-scheduler.add_job(settlement_event, 'cron', hour=12, minute=2, timezone=taipei_tz)
-scheduler.add_job(reminder_event, 'cron', hour=12, minute=4, timezone=taipei_tz)
-scheduler.add_job(report_event, 'cron', hour=12, minute=6, timezone=taipei_tz)
-
-# 启动调度器
-scheduler.start()
+    
+scheduler_event()
