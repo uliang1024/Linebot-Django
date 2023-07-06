@@ -9,7 +9,7 @@ from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent
 
 from leetcodelinebot.models import Users, ReportLog, write_to_report_log, get_report_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
 
-import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 import requests
