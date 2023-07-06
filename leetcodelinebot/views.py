@@ -13,8 +13,26 @@ import datetime
 import time
 import pytz
 
+import requests
+
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
+
+
+def send_line_message(message):
+    url = "https://notify-api.line.me/api/notify"
+    headers = {
+        "Authorization": "Bearer " + 'B7ETcX7t5qBktqBaInv1tFQZ5FWV7hMcNoNK4hTTEwA',
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    params = {
+        'message': message
+    }
+    response = requests.post(url, headers=headers, params=params)
+    if response.status_code == 200:
+        print("Line message sent successfully.")
+    else:
+        print("Failed to send Line message." + response.status_code)
 
 @csrf_exempt
 def callback(request):
@@ -107,12 +125,8 @@ def callback(request):
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
                 elif event.message.text == '測試':
-                    text = settlement_event()
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=text)  # 回覆未提取到數字訊息
-                    ) 
-                    # send_line_message(text)
+                    textHey = settlement_event()
+                    send_line_message(textHey)
                     
         return HttpResponse()
     else:

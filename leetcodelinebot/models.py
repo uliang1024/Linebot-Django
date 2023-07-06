@@ -62,22 +62,6 @@ def write_to_report_log(user_id, name, topic, done):
     report_log.save()
     reply_text = f"已新增ReportLog数据 {taiwan_time.strftime('%m/%d %H:%M')}"
     return reply_text
-
-
-def send_line_message(message):
-    url = "https://notify-api.line.me/api/notify"
-    headers = {
-        "Authorization": "Bearer " + 'B7ETcX7t5qBktqBaInv1tFQZ5FWV7hMcNoNK4hTTEwA',
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-    params = {
-        'message': message
-    }
-    response = requests.post(url, headers=headers, params=params)
-    if response.status_code == 200:
-        print("Line message sent successfully.")
-    else:
-        print("Failed to send Line message." + response.status_code)
         
 def get_past_24_hours_stats():
     # 取得台灣時區
