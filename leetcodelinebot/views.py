@@ -7,13 +7,14 @@ from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
 
-from leetcodelinebot.models import write_to_report_log, get_report_stats, get_past_24_hours_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
+from leetcodelinebot.models import Users, ReportLog, write_to_report_log, get_report_stats, extract_topic_from_message, settlement_event, reminder_event, report_event
 
 import datetime
-import time
-import pytz
+from pytz import timezone
 
 import requests
+
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -132,22 +133,91 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
-# 设置台湾时区
-taipei_tz = pytz.timezone('Asia/Taipei')
+# 创建一个调度器对象
+scheduler = BlockingScheduler()
 
-while True:
-    now = datetime.datetime.now(taipei_tz)
+# 设置台湾时区
+taipei_tz = timezone('Asia/Taipei')
+
+def settlement_event():
+    # 早上八點的結算事件
+    # 取得台灣時區
+    taiwan_tz = timezone('Asia/Taipei')
+    # 取得過去24小時的起始時間和結束時間
+    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
+    end_time = datetime.now(taiwan_tz)
     
-    # 检查当前时间是否是早上八点、下午两点或晚上十点
-    if now.hour == 11 and now.minute == 0 and now.second == 0:
-        textHey = settlement_event() 
-        send_line_message(textHey)
-    elif now.hour == 11 and now.minute == 1 and now.second == 0:
-        textHey = reminder_event()
-        send_line_message(textHey)
-    elif now.hour == 11 and now.minute == 2 and now.second == 0:
-        textHey = report_event()
-        send_line_message(textHey)
+    # 查詢過去24小時內完成題目的使用者和題目數量
+    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
+        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
+    ])
     
-    # 等待1秒钟，避免频繁检查
-    time.sleep(1)
+    reply_text = "📢📢📢結算學員完成題數\n"
+    reply_text += "⬇️⬇️過去24小時中⬇️⬇️\n"
+    reply_text += "-----------------------------\n"
+    
+    for entry in result:
+        user_id = entry["_id"]
+        count = entry["count"]
+        
+        # 構建回覆訊息
+        reply_text += f"{user_id}：{count} 題\n"
+        
+    reply_text += "-----------------------------\n"
+    reply_text += '💪💪請繼續完成今日的進度。'
+    
+    send_line_message(reply_text)
+
+def reminder_event():
+    # 下午兩點的提醒事件
+    reply_text = "❗❗❗ 請記得完成今日LeetCode 👀"
+    
+    send_line_message(reply_text)
+
+def report_event():
+    # 获取台湾时区
+    taiwan_tz = timezone('Asia/Taipei')
+
+    # 获取今天早上8点的时间
+    start_time = datetime.now(taiwan_tz).replace(hour=8, minute=0, second=0, microsecond=0)
+
+    # 获取当前时间
+    end_time = datetime.now(taiwan_tz)
+
+    # 查询从早上8点到当前时间之间完成题目的用户和题目数量
+    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
+        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
+    ])
+
+    reply_text = "❗請記得回報今日進度❗"
+    # reply_text += "⬇️目前尚未回報的有⬇️\n"
+    # reply_text += "-----------------------------\n"
+
+    # anybody = True
+
+    # for entry in result:
+    #     user_id = entry["_id"]
+    #     count = int(entry["count"])
+
+    #     # 仅在count小于0时显示记录
+    #     if count < 1:
+    #         # 构建回复消息
+    #         reply_text += f"{user_id} 尚未回報\n"
+    #         anybody = False
+
+    # reply_text += "-----------------------------\n"
+    # reply_text += '我看你們等著請客吧 哈'
+
+    # if anybody:
+    #     reply_text = "🎉恭喜各位都已完成今日目標\n"
+    #     reply_text += "明天請繼續努力💪💪"
+    
+    send_line_message(reply_text)
+
+# 添加定时任务，并设置触发时间（台湾时间）
+scheduler.add_job(settlement_event, 'cron', hour=11, minute=35, timezone=taipei_tz)
+scheduler.add_job(reminder_event, 'cron', hour=11, minute=36, timezone=taipei_tz)
+scheduler.add_job(report_event, 'cron', hour=11, minute=37, timezone=taipei_tz)
+
+# 启动调度器
+scheduler.start()
