@@ -135,19 +135,19 @@ def callback(request):
 # 设置台湾时区
 taipei_tz = pytz.timezone('Asia/Taipei')
 
-# while True:
-#     now = datetime.datetime.now(taipei_tz)
+while True:
+    now = datetime.datetime.now(taipei_tz)
     
-#     # 检查当前时间是否是早上八点、下午两点或晚上十点
-#     if now.hour == 10 and now.minute == 3 and now.second == 0:
-#         text = settlement_event() 
-#         send_line_message(text)
-#     elif now.hour == 10 and now.minute == 6 and now.second == 0:
-#         text = reminder_event()
-#         send_line_message(text)
-#     elif now.hour == 10 and now.minute == 9 and now.second == 0:
-#         text = report_event()
-#         send_line_message(text)
+    # 检查当前时间是否是早上八点、下午两点或晚上十点
+    if now.hour == 10 and now.minute == 55 and now.second == 0:
+        text = settlement_event() 
+        send_line_message(text)
+    elif now.hour == 10 and now.minute == 56 and now.second == 0:
+        text = reminder_event()
+        send_line_message(text)
+    elif now.hour == 10 and now.minute == 57 and now.second == 0:
+        text = report_event()
+        send_line_message(text)
     
-#     # 等待1秒钟，避免频繁检查
-#     time.sleep(1)
+    # 等待1秒钟，避免频繁检查
+    time.sleep(1)
