@@ -3,14 +3,13 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-from leetcodelinebot.models import ReportLog, Users
-from django.conf import settings
-from linebot import LineBotApi
-
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
+
+from leetcodelinebot.models import ReportLog, Users
 from leetcodelinebot.line_notify import send_line_message
+
 from datetime import datetime, timedelta
 from pytz import timezone
 import re

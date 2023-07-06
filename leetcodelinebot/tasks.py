@@ -1,5 +1,4 @@
 import requests
-import requests
 
 # https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=Z1oeGU1ZW8BmBsCoWbOCBt&redirect_uri=https://tasktrackbot-amisleo000.b4a.run/notify&scope=notify&state=abcd
 

@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-z9fth!vpz4p2j5%d3asj)%r+i8ako&b@qfp)98ycie+l=mtomo
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['tasktrackbot-amisleo000.b4a.run']
+ALLOWED_HOSTS = ['tasktrackbot-amisleo000.b4a.run', 'node37a.containers.back4app.com']
 # ALLOWED_HOSTS = ['127.0.0.1']
 
 connect("linebot", host="mongodb+srv://amisleo000:AMISleo123@cluster0.3dwwur1.mongodb.net")
