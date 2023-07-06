@@ -215,9 +215,9 @@ def report_event():
     send_line_message(reply_text)
 
 # 添加定时任务，并设置触发时间（台湾时间）
-scheduler.add_job(settlement_event, 'cron', hour=11, minute=35, timezone=taipei_tz)
-scheduler.add_job(reminder_event, 'cron', hour=11, minute=36, timezone=taipei_tz)
-scheduler.add_job(report_event, 'cron', hour=11, minute=37, timezone=taipei_tz)
+scheduler.add_job(settlement_event, 'cron', hour=11, minute=44, timezone=taipei_tz)
+scheduler.add_job(reminder_event, 'cron', hour=11, minute=45, timezone=taipei_tz)
+scheduler.add_job(report_event, 'cron', hour=11, minute=46, timezone=taipei_tz)
 
 # 启动调度器
 scheduler.start()
