@@ -32,7 +32,7 @@ else:
 # def send_line_message(message):
 #     url = "https://notify-api.line.me/api/notify"
 #     headers = {
-#         "Authorization": "Bearer " + '9G8bA90XiyYVaT0HUktLP5VksmEfkcmeDUNFdEfNZWH',
+#         "Authorization": "Bearer " + 'MoiWUt97xCLpZTuTVeNvP5kFp3rvVcGS2PFLmfSwMyi',
 #         "Content-Type": "application/x-www-form-urlencoded"
 #     }
 #     params = {
