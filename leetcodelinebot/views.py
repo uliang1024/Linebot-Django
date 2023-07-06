@@ -6,106 +6,13 @@ from django.conf import settings
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
-
-from leetcodelinebot.models import Users, ReportLog, write_to_report_log, get_report_stats, extract_topic_from_message
+from leetcodelinebot.models import Users, ReportLog, write_to_report_log, get_report_stats, extract_topic_from_message, settlement_event, send_line_message
 from leetcodelinebot.scheduler_script import scheduler_event
 from datetime import datetime, timedelta
 from pytz import timezone
 
-import requests
-
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
-
-def settlement_event():
-    # 早上八點的結算事件
-    # 取得台灣時區
-    taiwan_tz = timezone('Asia/Taipei')
-    # 取得過去24小時的起始時間和結束時間
-    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
-    end_time = datetime.now(taiwan_tz)
-    
-    # 查詢過去24小時內完成題目的使用者和題目數量
-    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
-    ])
-    
-    reply_text = "📢📢📢結算學員完成題數\n"
-    reply_text += "⬇️⬇️過去24小時中⬇️⬇️\n"
-    reply_text += "-----------------------------\n"
-    
-    for entry in result:
-        user_id = entry["_id"]
-        count = entry["count"]
-        
-        # 構建回覆訊息
-        reply_text += f"{user_id}：{count} 題\n"
-        
-    reply_text += "-----------------------------\n"
-    reply_text += '💪💪請繼續完成今日的進度。'
-    
-    send_line_message(reply_text)
-
-def reminder_event():
-    # 下午兩點的提醒事件
-    reply_text = "❗❗❗ 請記得完成今日LeetCode 👀"
-    
-    send_line_message(reply_text)
-
-def report_event():
-    # 获取台湾时区
-    taiwan_tz = timezone('Asia/Taipei')
-
-    # 获取今天早上8点的时间
-    start_time = datetime.now(taiwan_tz).replace(hour=8, minute=0, second=0, microsecond=0)
-
-    # 获取当前时间
-    end_time = datetime.now(taiwan_tz)
-
-    # 查询从早上8点到当前时间之间完成题目的用户和题目数量
-    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
-    ])
-
-    reply_text = "❗請記得回報今日進度❗"
-    # reply_text += "⬇️目前尚未回報的有⬇️\n"
-    # reply_text += "-----------------------------\n"
-
-    # anybody = True
-
-    # for entry in result:
-    #     user_id = entry["_id"]
-    #     count = int(entry["count"])
-
-    #     # 仅在count小于0时显示记录
-    #     if count < 1:
-    #         # 构建回复消息
-    #         reply_text += f"{user_id} 尚未回報\n"
-    #         anybody = False
-
-    # reply_text += "-----------------------------\n"
-    # reply_text += '我看你們等著請客吧 哈'
-
-    # if anybody:
-    #     reply_text = "🎉恭喜各位都已完成今日目標\n"
-    #     reply_text += "明天請繼續努力💪💪"
-    
-    send_line_message(reply_text)
-
-def send_line_message(message):
-    url = "https://notify-api.line.me/api/notify"
-    headers = {
-        "Authorization": "Bearer " + 'MoiWUt97xCLpZTuTVeNvP5kFp3rvVcGS2PFLmfSwMyi',
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-    params = {
-        'message': message
-    }
-    response = requests.post(url, headers=headers, params=params)
-    if response.status_code == 200:
-        print("Line message sent successfully.")
-    else:
-        print("Failed to send Line message." + response.status_code)
 
 @csrf_exempt
 def callback(request):
