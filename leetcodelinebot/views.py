@@ -8,9 +8,8 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
 
 from leetcodelinebot.models import ReportLog, Users
-from leetcodelinebot.line_notify import send_line_message
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from pytz import timezone
 import re
 
@@ -31,57 +30,57 @@ def callback(request):
             return HttpResponseBadRequest()
  
         for event in events:
-            # if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
-            #     group_id = event.source.group_id  # 群組ID
-            #     user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
+            if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
+                group_id = event.source.group_id  # 群組ID
+                user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
 
-            #     for user_id in user_ids:
-            #         profile = line_bot_api.get_profile(user_id)
-            #         user = Users(
-            #             user_id = user_id,
-            #             display_name = profile.display_name,
-            #             status_message = profile.status_message,
-            #             picture_url = profile.picture_url,
-            #             # 其他使用者相關的欄位值
-            #         )
-            #         user.save()  # 將使用者物件保存至MongoDB的UsersCollection
+                for user_id in user_ids:
+                    profile = line_bot_api.get_profile(user_id)
+                    user = Users(
+                        user_id = user_id,
+                        display_name = profile.display_name,
+                        status_message = profile.status_message,
+                        picture_url = profile.picture_url,
+                        # 其他使用者相關的欄位值
+                    )
+                    user.save()  # 將使用者物件保存至MongoDB的UsersCollection
 
-            #     line_bot_api.reply_message(
-            #         event.reply_token,
-            #         TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
-            #     )
-            # elif isinstance(event, FollowEvent):  # 如果是加好友事件
-            #     user_id = event.source.user_id
-            #     profile = line_bot_api.get_profile(user_id)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
+                )
+            elif isinstance(event, FollowEvent):  # 如果是加好友事件
+                user_id = event.source.user_id
+                profile = line_bot_api.get_profile(user_id)
 
-            #     user = Users.objects(user_id=user_id).first()
-            #     if user:
-            #         user.display_name = profile.display_name
-            #         user.status_message = profile.status_message
-            #         user.picture_url = profile.picture_url
-            #         user.save()
+                user = Users.objects(user_id=user_id).first()
+                if user:
+                    user.display_name = profile.display_name
+                    user.status_message = profile.status_message
+                    user.picture_url = profile.picture_url
+                    user.save()
                 
-            #     line_bot_api.reply_message(
-            #         event.reply_token,
-            #         TextSendMessage(text='有人偷偷加我好友')  # 聊天室歡迎訊息
-            #     )
-            # elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
-            #     user_id = event.joined.members[0].user_id  # 取得新加入使用者的 ID
-            #     profile = line_bot_api.get_profile(user_id)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='有人偷偷加我好友')  # 聊天室歡迎訊息
+                )
+            elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
+                user_id = event.joined.members[0].user_id  # 取得新加入使用者的 ID
+                profile = line_bot_api.get_profile(user_id)
 
-            #     user = Users(
-            #         user_id=user_id,
-            #         display_name=profile.display_name,
-            #         status_message=profile.status_message,
-            #         picture_url=profile.picture_url,
-            #         punish=0
-            #     )
-            #     user.save()
-            #     line_bot_api.reply_message(
-            #         event.reply_token,
-            #         TextSendMessage(text='歡迎歡迎新朋友')  # 聊天室歡迎訊息
-            #     )
-            if isinstance(event, MessageEvent):  # 如果有訊息事件
+                user = Users(
+                    user_id=user_id,
+                    display_name=profile.display_name,
+                    status_message=profile.status_message,
+                    picture_url=profile.picture_url,
+                    punish=0
+                )
+                user.save()
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='歡迎歡迎新朋友')  # 聊天室歡迎訊息
+                )
+            elif isinstance(event, MessageEvent):  # 如果有訊息事件
                 if event.message.text == '查詢紀錄':
                     user_id = event.source.user_id
                     reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
@@ -105,9 +104,6 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
-                elif event.message.text == '測試':
-                    textHey = settlement_event()
-                    send_line_message(textHey)
                     
         return HttpResponse()
     else:
@@ -165,39 +161,3 @@ def extract_topic_from_message(message):
         return topic
     # 若未提取到數字部分，回傳 None
     return None
-
-
-def settlement_event():
-    taiwan_tz = timezone('Asia/Taipei')
-    start_time = datetime.now(taiwan_tz) - timedelta(hours=24)
-    end_time = datetime.now(taiwan_tz)
-    
-    # 查詢過去24小時內完成題目的使用者和題目數量
-    result = ReportLog.objects(created_at__gte=start_time, created_at__lt=end_time).aggregate([
-        {"$group": {"_id": "$name", "count": {"$sum": 1}}}
-    ])
-    
-    reply_text = "📢📢📢結算學員完成題數\n"
-    reply_text += "⬇️⬇️過去24小時中⬇️⬇️\n"
-    reply_text += "-----------------------------\n"
-    
-    for entry in result:
-        user_id = entry["_id"]
-        count = entry["count"]
-
-        reply_text += f"{user_id}：{count} 題\n"
-        
-    reply_text += "-----------------------------\n"
-    reply_text += '💪💪請繼續完成今日的進度。'
-    
-    send_line_message(reply_text)
-
-# def reminder_event():
-#     reply_text = "❗❗❗ 請記得完成今日LeetCode 👀"
-    
-#     send_line_message(reply_text)
-
-# def report_event():
-#     reply_text = "❗請記得回報今日進度❗"
-    
-#     send_line_message(reply_text)
