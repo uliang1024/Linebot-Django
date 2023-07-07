@@ -1,5 +1,6 @@
 from mongoengine import *
 from django.utils import timezone
+from datetime import datetime
 
 class Users(Document):
     user_id = StringField(required=True)
@@ -13,7 +14,9 @@ class ReportLog(Document):
     name = StringField()
     topic = StringField()
     done = BooleanField()
-    created_at = DateTimeField(default=timezone.now)
+    taiwan_tz = timezone('Asia/Taipei')
+    taiwan_time = datetime.now(taiwan_tz)
+    created_at = DateTimeField(default=taiwan_time)
 
     meta = {
         'collection': 'ReportLog',
