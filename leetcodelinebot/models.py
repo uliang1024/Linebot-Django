@@ -12,7 +12,7 @@ class ReportLog(Document):
     name = StringField()
     topic = StringField()
     done = BooleanField()
-    created_at = StringField()
+    created_at = DateTimeField()
 
     meta = {
         'collection': 'ReportLog',

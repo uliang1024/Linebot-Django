@@ -124,13 +124,13 @@ def write_to_report_log(user_id, name, topic, done):
     taiwan_tz = timezone('Asia/Taipei')
     taiwan_time = datetime.now(taiwan_tz)
     formatted_time = taiwan_time.strftime('%Y/%m/%d %H:%M')
-    taiwan_time_str = str(taiwan_time)
+
     report_log = ReportLog(
         user_id=user_id,
         name=name,
         topic=topic,
         done=done,
-        created_at=taiwan_time_str
+        created_at=taiwan_time
     )
 
     report_log.save()
