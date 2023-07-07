@@ -38,9 +38,6 @@ def callback(request):
                     profile = line_bot_api.get_profile(user_id)
                     user = Users(
                         user_id = user_id,
-                        display_name = profile.display_name,
-                        status_message = profile.status_message,
-                        picture_url = profile.picture_url,
                         # 其他使用者相關的欄位值
                     )
                     user.save()  # 將使用者物件保存至MongoDB的UsersCollection
@@ -70,10 +67,6 @@ def callback(request):
 
                 user = Users(
                     user_id=user_id,
-                    display_name=profile.display_name,
-                    status_message=profile.status_message,
-                    picture_url=profile.picture_url,
-                    punish=0
                 )
                 user.save()
                 line_bot_api.reply_message(

@@ -2,9 +2,9 @@ from mongoengine import *
 
 class Users(Document):
     user_id = StringField(required=True)
-    display_name = StringField()
-    status_message = StringField()
-    picture_url = StringField()
+    display_name = StringField(default="")
+    status_message = StringField(default="")
+    picture_url = StringField(default="")
     punish = IntField(default=0)
     
 class ReportLog(Document):
