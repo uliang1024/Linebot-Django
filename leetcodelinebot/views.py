@@ -133,7 +133,7 @@ def write_to_report_log(user_id, name, topic, done):
     )
 
     report_log.save()
-    reply_text = f"已新增ReportLog數據 {taiwan_time.strftime('%m/%d %H:%M')}"
+    reply_text = f"已新增ReportLog數據 {taiwan_time}"
     return reply_text
 
 def get_report_stats(user_id):
@@ -191,25 +191,12 @@ def settlement_event():
     
     send_line_message(reply_text)
 
-def reminder_event():
-    reply_text = "❗❗❗ 請記得完成今日LeetCode 👀"
+# def reminder_event():
+#     reply_text = "❗❗❗ 請記得完成今日LeetCode 👀"
     
-    send_line_message(reply_text)
+#     send_line_message(reply_text)
 
-def report_event():
-    reply_text = "❗請記得回報今日進度❗"
+# def report_event():
+#     reply_text = "❗請記得回報今日進度❗"
     
-    send_line_message(reply_text)
-    
-    
-from apscheduler.schedulers.blocking import BlockingScheduler
-# 创建一个调度器对象
-scheduler = BlockingScheduler()
-# 设置台湾时区
-taipei_tz = timezone('Asia/Taipei')
-# 添加定时任务，并设置触发时间（台湾时间）
-scheduler.add_job(settlement_event, 'cron', hour=8, minute=0, second=0, timezone=taipei_tz)
-scheduler.add_job(reminder_event, 'cron', hour=14, minute=0, second=0, timezone=taipei_tz)
-scheduler.add_job(report_event, 'cron', hour=22, minute=0, second=0, timezone=taipei_tz)
-# 启动调度器
-scheduler.start()
+#     send_line_message(reply_text)
