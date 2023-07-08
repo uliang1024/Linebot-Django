@@ -157,11 +157,11 @@ def callback(request):
                     )
                 else:
                     message = event.message.text
-                    reply_text = chatGPT_send_message(message)
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)  # 構建回覆訊息
-                    )
+                    # reply_text = chatGPT_send_message(message)
+                    # line_bot_api.reply_message(
+                    #     event.reply_token,
+                    #     TextSendMessage(text=reply_text)  # 構建回覆訊息
+                    # )
                     user_id = event.source.user_id
                     isMe = myself(user_id)
                     if isMe:
