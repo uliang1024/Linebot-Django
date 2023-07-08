@@ -34,9 +34,11 @@ def callback(request):
                 group_id = event.source.group_id  # 群組ID
                 user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
 
+                taiwan_tz = timezone('Asia/Taipei')
+                taiwan_time = datetime.now(taiwan_tz)
+
                 for user_id in user_ids:
                     user = Users.objects(user_id=user_id).first()
-                    profile = line_bot_api.get_profile(user_id)
                     if not user:
                         users = Users(
                             user_id = user_id,
