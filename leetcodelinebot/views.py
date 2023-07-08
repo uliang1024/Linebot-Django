@@ -8,6 +8,7 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent, TextSendMessage, TemplateSendMessage, ButtonsTemplate, URITemplateAction
 
 from leetcodelinebot.models import ReportLog, Users
+from leetcodelinebot.lineNotify import line_notify_send_message
 
 from datetime import datetime
 from pytz import timezone
@@ -146,6 +147,17 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
+                elif event.message.text == '查詢紀錄':
+                    user_id = event.source.user_id
+                    reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=reply_text)  # 構建回覆訊息
+                    )
+                else:
+                    if event.source.user_id == 'Ucb80d54fb1f89c25ae4d3eed5728e51f':
+                        line_notify_send_message(event.message.text)
+                        
                     
         return HttpResponse()
     else:

@@ -4,7 +4,7 @@ import requests
 token = 'q3KwMlbfH3Upxw7FiaYlaopFyJwlHK3tKnOuLnaGhmI'
 
 # 要發送的訊息
-message = '喔是喔'
+message = '可以回報你們進度了'
 
 # HTTP 標頭參數與資料
 headers = { "Authorization": "Bearer " + token }
@@ -24,4 +24,6 @@ files = {'imageFile': image_content}
 
 # 以 requests 發送 POST 請求
 requests.post("https://notify-api.line.me/api/notify",
-    headers = headers, data = data, files = files)
+    headers = headers, data = data)
+# requests.post("https://notify-api.line.me/api/notify",
+#     headers = headers, data = data, files = files)
