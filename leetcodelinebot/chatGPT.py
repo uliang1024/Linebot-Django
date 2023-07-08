@@ -1,6 +1,7 @@
+import os
 import requests
 
-CHATGPT_API_KEY = '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'
+CHATGPT_API_KEY = os.environ.get('CHATGPT_API_KEY')  # 從環境變量中獲取 ChatGPT 金鑰
 
 def chatGPT_send_message(message):
 
