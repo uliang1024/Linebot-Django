@@ -1,11 +1,22 @@
 from mongoengine import *
 
 class Users(Document):
-    user_id = StringField(required=True)
-    display_name = StringField(default="")
-    status_message = StringField(default="")
-    picture_url = StringField(default="")
-    punish = IntField(default=0)
+    user_id = StringField()
+    name = StringField()
+    status_message = StringField()
+    picture_url = StringField()
+    punish = IntField()
+    
+    meta = {
+        'collection': 'Users',
+        'indexes': [
+            'user_id',
+            'name',
+            'punish',
+        ],
+        'ordering': ['user_id'],
+        'strict': False 
+    }
     
 class ReportLog(Document):
     user_id = StringField()
