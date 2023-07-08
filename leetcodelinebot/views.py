@@ -37,6 +37,7 @@ def callback(request):
                     TemplateSendMessage(
                         alt_text='Buttons template',
                         template=ButtonsTemplate(
+                            thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
                             title='大家好我是Tasktrackbot',
                             text='請先將我加入好友才可以為你服務',
                             actions=[
@@ -63,10 +64,6 @@ def callback(request):
                     user.status_message = profile.status_message
                     user.picture_url = profile.picture_url
                     user.save()
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text='更新使用者')  # 聊天室歡迎訊息
-                    )
                 else:
                     users = Users(
                         user_id = user_id,
@@ -77,14 +74,42 @@ def callback(request):
                         created_at=taiwan_time
                     )
                     users.save()
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text='新增使用者')  # 聊天室歡迎訊息
-                    )
-            elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
-                line_bot_api.reply_message(
+
+                line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
-                    TextSendMessage(text='Hi ! 歡迎加入 ~')  # 聊天室歡迎訊息
+                    TemplateSendMessage(
+                        alt_text='Buttons template',
+                        template=ButtonsTemplate(
+                            thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
+                            title='哈囉~我是Tasktrackbot',
+                            text='請先將我加入好友才可以為你服務',
+                            actions=[
+                                URITemplateAction(
+                                    label='加入好友',
+                                    uri='https://liff.line.me/1645278921-kWRPP32q/?accountId=615veimk'
+                                )
+                            ]
+                        )
+                    )
+                )
+
+            elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
+                line_bot_api.reply_message(  # 回復傳入的訊息文字
+                    event.reply_token,
+                    TemplateSendMessage(
+                        alt_text='Buttons template',
+                        template=ButtonsTemplate(
+                            thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
+                            title='歡迎新朋友~我是Tasktrackbot',
+                            text='請先將我加入好友才可以為你服務',
+                            actions=[
+                                URITemplateAction(
+                                    label='加入好友',
+                                    uri='https://liff.line.me/1645278921-kWRPP32q/?accountId=615veimk'
+                                )
+                            ]
+                        )
+                    )
                 )
             elif isinstance(event, MessageEvent):  # 如果有訊息事件
                 if event.message.text == '查詢紀錄':
