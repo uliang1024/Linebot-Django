@@ -6,13 +6,14 @@ class Users(Document):
     status_message = StringField()
     picture_url = StringField()
     punish = IntField()
+    created_at = DateTimeField()
     
     meta = {
         'collection': 'Users',
         'indexes': [
             'user_id',
             'name',
-            'punish',
+            'created_at' ,
         ],
         'ordering': ['user_id'],
         'strict': False 
@@ -30,7 +31,6 @@ class ReportLog(Document):
         'indexes': [
             'user_id',
             'name',
-            'topic',
             'created_at',
         ],
         'ordering': ['created_at'],

@@ -35,22 +35,30 @@ def callback(request):
                 user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
 
                 for user_id in user_ids:
+                    user = Users.objects(user_id=user_id).first()
                     profile = line_bot_api.get_profile(user_id)
-                    user = Users(
-                        user_id = user_id,
-                        # 其他使用者相關的欄位值
-                    )
-                    user.save()  # 將使用者物件保存至MongoDB的UsersCollection
+                    if not user:
+                        users = Users(
+                            user_id = user_id,
+                            punish = 0,
+                            created_at=taiwan_time
+                        )
+                        users.save()
 
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
                 )
+                        
             elif isinstance(event, FollowEvent):  # 如果是加好友事件
                 user_id = event.source.user_id
                 profile = line_bot_api.get_profile(user_id)
 
                 user = Users.objects(user_id=user_id).first()
+                
+                taiwan_tz = timezone('Asia/Taipei')
+                taiwan_time = datetime.now(taiwan_tz)
+                
                 if user:
                     user.display_name = profile.display_name
                     user.status_message = profile.status_message
@@ -66,7 +74,8 @@ def callback(request):
                         name = profile.display_name,
                         status_message = profile.status_message,
                         picture_url = profile.picture_url,
-                        punish = 0
+                        punish = 0,
+                        created_at=taiwan_time
                     )
                     users.save()
                     line_bot_api.reply_message(
