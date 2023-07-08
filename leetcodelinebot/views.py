@@ -163,9 +163,9 @@ def callback(request):
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
                     user_id = event.source.user_id
-                    isMe =  myself(user_id)
+                    isMe = myself(user_id)
                     if isMe:
-                        line_notify_send_message(event.message.text)
+                        line_notify_send_message(message)
                         
                     
         return HttpResponse()
