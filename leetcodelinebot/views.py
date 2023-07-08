@@ -31,21 +31,6 @@ def callback(request):
  
         for event in events:
             if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
-                group_id = event.source.group_id  # 群組ID
-                user_ids = line_bot_api.get_group_member_ids(group_id)  # 取得群組內使用者ID列表
-
-                taiwan_tz = timezone('Asia/Taipei')
-                taiwan_time = datetime.now(taiwan_tz)
-
-                for user_id in user_ids:
-                    user = Users.objects(user_id=user_id).first()
-                    if not user:
-                        users = Users(
-                            user_id = user_id,
-                            punish = 0,
-                            created_at=taiwan_time
-                        )
-                        users.save()
 
                 line_bot_api.reply_message(
                     event.reply_token,
@@ -84,18 +69,10 @@ def callback(request):
                         event.reply_token,
                         TextSendMessage(text='新增使用者')  # 聊天室歡迎訊息
                     )
-                
             elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
-                user_id = event.joined.members[0].user_id  # 取得新加入使用者的 ID
-                profile = line_bot_api.get_profile(user_id)
-
-                user = Users(
-                    user_id=user_id,
-                )
-                user.save()
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text='歡迎歡迎新朋友')  # 聊天室歡迎訊息
+                    TextSendMessage(text='Hi ! 歡迎加入 ~')  # 聊天室歡迎訊息
                 )
             elif isinstance(event, MessageEvent):  # 如果有訊息事件
                 if event.message.text == '查詢紀錄':
@@ -110,12 +87,18 @@ def callback(request):
                     if topic is not None:
                         # 建立 ReportLog 物件並保存到資料庫
                         user_id = event.source.user_id
-                        profile = line_bot_api.get_profile(user_id)
-                        reply_text = write_to_report_log(user_id=event.source.user_id, name=profile.display_name, topic=topic, done=True)
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text=reply_text)  # 回覆新增成功訊息
-                        )
+                        try:
+                            profile = line_bot_api.get_profile(user_id)
+                            reply_text = write_to_report_log(user_id=user_id, name=profile.display_name, topic=topic, done=True)
+                            line_bot_api.reply_message(
+                                event.reply_token,
+                                TextSendMessage(text=reply_text)  # 回覆新增成功訊息
+                            )
+                        except LineBotApiError:
+                            line_bot_api.reply_message(
+                                event.reply_token,
+                                TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
+                            )
                     else:
                         line_bot_api.reply_message(
                             event.reply_token,
