@@ -4,7 +4,7 @@ import requests
 token = 'q3KwMlbfH3Upxw7FiaYlaopFyJwlHK3tKnOuLnaGhmI'
 
 # 要發送的訊息
-message = '我真的好累了'
+message = '喔是喔'
 
 # HTTP 標頭參數與資料
 headers = { "Authorization": "Bearer " + token }

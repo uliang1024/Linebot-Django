@@ -35,7 +35,7 @@ def callback(request):
                 line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
                     TemplateSendMessage(
-                        alt_text='Buttons template',
+                        alt_text='哈囉 哈囉',
                         template=ButtonsTemplate(
                             thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
                             title='大家好我是Tasktrackbot',
@@ -78,7 +78,7 @@ def callback(request):
                 line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
                     TemplateSendMessage(
-                        alt_text='Buttons template',
+                        alt_text='哈囉 哈囉',
                         template=ButtonsTemplate(
                             thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
                             title='哈囉~我是Tasktrackbot',
@@ -97,7 +97,7 @@ def callback(request):
                 line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
                     TemplateSendMessage(
-                        alt_text='Buttons template',
+                        alt_text='歡迎 歡迎',
                         template=ButtonsTemplate(
                             thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
                             title='歡迎新朋友~我是Tasktrackbot',
@@ -118,6 +118,11 @@ def callback(request):
                     line_bot_api.reply_message(
                         event.reply_token,
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
+                    )
+                elif event.message.text == '回報進度':
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text="輸入格式：「完成 1」")  # 構建回覆訊息
                     )
                 elif event.message.text is not None and event.message.text.startswith('完成'):
                     topic = extract_topic_from_message(event.message.text)
