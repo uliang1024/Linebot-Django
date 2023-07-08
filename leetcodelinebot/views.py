@@ -9,7 +9,8 @@ from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent
 
 from leetcodelinebot.models import ReportLog, Users
 from leetcodelinebot.lineNotify import line_notify_send_message
-
+from leetcodelinebot.chatGPT import chatGPT_send_message
+from leetcodelinebot.myself import myself
 from datetime import datetime
 from pytz import timezone
 import re
@@ -155,7 +156,15 @@ def callback(request):
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
                 else:
-                    if event.source.user_id == 'Ucb80d54fb1f89c25ae4d3eed5728e51f':
+                    message = event.message.text
+                    reply_text = chatGPT_send_message(message)
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=reply_text)  # 構建回覆訊息
+                    )
+                    user_id = event.source.user_id
+                    isMe =  myself(user_id)
+                    if isMe:
                         line_notify_send_message(event.message.text)
                         
                     
