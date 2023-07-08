@@ -56,11 +56,24 @@ def callback(request):
                     user.status_message = profile.status_message
                     user.picture_url = profile.picture_url
                     user.save()
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text='更新使用者')  # 聊天室歡迎訊息
+                    )
+                else:
+                    users = Users(
+                        user_id = user_id,
+                        name = profile.display_name,
+                        status_message = profile.status_message,
+                        picture_url = profile.picture_url,
+                        punish = 0
+                    )
+                    users.save()
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text='新增使用者')  # 聊天室歡迎訊息
+                    )
                 
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text='有人偷偷加我好友')  # 聊天室歡迎訊息
-                )
             elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
                 user_id = event.joined.members[0].user_id  # 取得新加入使用者的 ID
                 profile = line_bot_api.get_profile(user_id)
