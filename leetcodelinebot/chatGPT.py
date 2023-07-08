@@ -1,6 +1,6 @@
 import requests
 
-CHATGPT_API_KEY = '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'
+CHATGPT_API_KEY = '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'
 
 def chatGPT_send_message(message):
 
