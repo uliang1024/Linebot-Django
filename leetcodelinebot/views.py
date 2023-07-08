@@ -9,7 +9,6 @@ from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent
 
 from leetcodelinebot.models import ReportLog, Users
 from leetcodelinebot.lineNotify import line_notify_send_message
-from leetcodelinebot.chatGPT import chatGPT_send_message
 from leetcodelinebot.myself import myself
 from datetime import datetime
 from pytz import timezone
@@ -166,7 +165,6 @@ def callback(request):
                     isMe = myself(user_id)
                     if isMe:
                         line_notify_send_message(message)
-                        
                     
         return HttpResponse()
     else:
