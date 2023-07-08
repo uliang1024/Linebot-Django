@@ -7,10 +7,15 @@ def chatGPT_send_message(message):
 
     # 呼叫 ChatGPT API
     response = requests.post(
-        'https://api.openai.com/v1/chat/completions',
-        headers={'Authorization': f'Bearer {CHATGPT_API_KEY}'},
-        json={'messages': [{'role': 'system', 'content': 'user: ' + message}]},
-    )
+    'https://api.openai.com/v1/chat/completions',
+    headers={'Authorization': f'Bearer {CHATGPT_API_KEY}'},
+    json={
+        'messages': [
+            {'role': 'system', 'content': 'user: ' + message}
+        ],
+        'model': 'text-davinci-003',  # 指定要使用的模型
+    },
+)
     print(response.json())
     
     # 從 ChatGPT API 的回應中取得回覆的訊息文字
