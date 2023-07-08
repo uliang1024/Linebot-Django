@@ -5,7 +5,7 @@ from django.conf import settings
 
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent
+from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent, MemberJoinedEvent, TextSendMessage, TemplateSendMessage, ButtonsTemplate, URITemplateAction
 
 from leetcodelinebot.models import ReportLog, Users
 
@@ -32,9 +32,21 @@ def callback(request):
         for event in events:
             if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
 
-                line_bot_api.reply_message(
+                line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
-                    TextSendMessage(text='大家好，我是Line bot！\n請將我加為好友才能為你服務！')  # 聊天室歡迎訊息
+                    TemplateSendMessage(
+                        alt_text='Buttons template',
+                        template=ButtonsTemplate(
+                            title='大家好我是Tasktrackbot',
+                            text='請先將我加入好友才可以為你服務',
+                            actions=[
+                                URITemplateAction(
+                                    label='加入好友',
+                                    uri='https://liff.line.me/1645278921-kWRPP32q/?accountId=615veimk'
+                                )
+                            ]
+                        )
+                    )
                 )
                         
             elif isinstance(event, FollowEvent):  # 如果是加好友事件
