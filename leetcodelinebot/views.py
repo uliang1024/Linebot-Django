@@ -155,11 +155,12 @@ def callback(request):
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
                     print(event.source.group_id)
-                elif event.message.text is not None and event.message.text.startswith('群發'):
+                elif event.message.text is not None and event.message.text.startswith('：'):
                     message = event.message.text
                     user_id = event.source.user_id
                     isMe = myself(user_id)
                     if isMe:
+                        message = message.replace('：', '')
                         line_notify_send_message(message)
                 else:
                     message = event.message.text

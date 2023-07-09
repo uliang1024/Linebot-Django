@@ -11,6 +11,10 @@ def AI_chatbot(message):
     	"X-RapidAPI-Host": "aeona3.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring)
+    response = requests.post(url, headers=headers, params=querystring)
+
+    print(response)
+    print(response.json)
+    print(response.text)
 
     return response.json()
