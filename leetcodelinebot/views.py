@@ -9,7 +9,6 @@ from linebot.models import MessageEvent, TextSendMessage, JoinEvent, FollowEvent
 
 from leetcodelinebot.models import ReportLog, Users
 from leetcodelinebot.lineNotify import line_notify_send_message
-from leetcodelinebot.aeona import AI_chatbot
 from leetcodelinebot.myself import myself
 from datetime import datetime
 from pytz import timezone
@@ -115,16 +114,31 @@ def callback(request):
             elif isinstance(event, MessageEvent):  # 如果有訊息事件
                 if event.message.text == '查詢紀錄':
                     user_id = event.source.user_id
-                    reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)  # 構建回覆訊息
-                    )
+                    try:
+                        profile = line_bot_api.get_profile(user_id)
+                        reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text=profile.display_name + reply_text)  # 構建回覆訊息
+                        )
+                    except LineBotApiError:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
+                        )
                 elif event.message.text == '回報進度':
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text="輸入格式：「完成 1」")  # 構建回覆訊息
-                    )
+                    user_id = event.source.user_id
+                    try:
+                        profile = line_bot_api.get_profile(user_id)
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text="輸入格式：「完成 1」")  # 構建回覆訊息
+                        )
+                    except LineBotApiError:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
+                        )
                 elif event.message.text is not None and event.message.text.startswith('完成'):
                     topic = extract_topic_from_message(event.message.text)
                     if topic is not None:
@@ -147,14 +161,6 @@ def callback(request):
                             event.reply_token,
                             TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                         )
-                elif event.message.text == '查詢紀錄':
-                    user_id = event.source.user_id
-                    reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)  # 構建回覆訊息
-                    )
-                    print(event.source.group_id)
                 elif event.message.text is not None and event.message.text.startswith('：'):
                     message = event.message.text
                     user_id = event.source.user_id
@@ -162,13 +168,13 @@ def callback(request):
                     if isMe:
                         message = message.replace('：', '')
                         line_notify_send_message(message)
-                else:
-                    message = event.message.text
-                    reply_text = AI_chatbot(message)
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=reply_text)  # 構建回覆訊息
-                    )
+                # else:
+                #     message = event.message.text
+                #     reply_text = AI_chatbot(message)
+                #     line_bot_api.reply_message(
+                #         event.reply_token,
+                #         TextSendMessage(text=reply_text)  # 構建回覆訊息
+                #     )
                     
         return HttpResponse()
     else:
@@ -195,7 +201,13 @@ def write_to_report_log(user_id, name, topic, done):
     )
 
     report_log.save()
-    reply_text = f"已新增ReportLog數據 {formatted_time}"
+    
+    user = Users.objects(user_id=user_id).first()
+    
+    user.punish +=1 
+    user.save()
+    
+    reply_text = f"成功新增紀錄 {formatted_time}"
     return reply_text
 
 def get_report_stats(user_id):
