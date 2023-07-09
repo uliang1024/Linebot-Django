@@ -33,7 +33,6 @@ def callback(request):
  
         for event in events:
             if isinstance(event, JoinEvent):  # 如果有加入聊天室的事件
-                group_id = event.source.group_id
                 line_bot_api.reply_message(  # 回復傳入的訊息文字
                     event.reply_token,
                     TemplateSendMessage(
@@ -41,7 +40,7 @@ def callback(request):
                         template=ButtonsTemplate(
                             thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
                             title='大家好我是Tasktrackbot',
-                            text=f'請先將我加入好友才可以為你服務{group_id}',
+                            text='請先將我加入好友才可以為你服務',
                             actions=[
                                 URITemplateAction(
                                     label='加入好友',
@@ -155,6 +154,13 @@ def callback(request):
                         event.reply_token,
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
+                    print(event.source.group_id)
+                elif event.message.text is not None and event.message.text.startswith('群發'):
+                    message = event.message.text
+                    user_id = event.source.user_id
+                    isMe = myself(user_id)
+                    if isMe:
+                        line_notify_send_message(message)
                 else:
                     message = event.message.text
                     reply_text = AI_chatbot(message)
@@ -162,10 +168,6 @@ def callback(request):
                         event.reply_token,
                         TextSendMessage(text=reply_text)  # 構建回覆訊息
                     )
-                    user_id = event.source.user_id
-                    isMe = myself(user_id)
-                    if isMe:
-                        line_notify_send_message(message)
                     
         return HttpResponse()
     else:
