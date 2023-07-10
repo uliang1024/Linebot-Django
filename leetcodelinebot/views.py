@@ -55,16 +55,14 @@ def callback(request):
                 profile = line_bot_api.get_profile(user_id)
 
                 user = Users.objects(user_id=user_id).first()
-                
-                taiwan_tz = timezone('Asia/Taipei')
-                taiwan_time = datetime.now(taiwan_tz)
-                
                 if user:
                     user.display_name = profile.display_name
                     user.status_message = profile.status_message
                     user.picture_url = profile.picture_url
                     user.save()
                 else:
+                    taiwan_tz = timezone('Asia/Taipei')
+                    taiwan_time = datetime.now(taiwan_tz)
                     users = Users(
                         user_id = user_id,
                         name = profile.display_name,
@@ -74,23 +72,10 @@ def callback(request):
                         created_at=taiwan_time
                     )
                     users.save()
-
-                line_bot_api.reply_message(  # 回復傳入的訊息文字
+                    
+                line_bot_api.reply_message(
                     event.reply_token,
-                    TemplateSendMessage(
-                        alt_text='哈囉 哈囉',
-                        template=ButtonsTemplate(
-                            thumbnail_image_url='https://picx.zhimg.com/v2-e1425095196ac03e4c781a42be0cdc26_r.jpg',  # 替換成你要顯示的圖片網址
-                            title='哈囉~我是Tasktrackbot',
-                            text='請先將我加入好友才可以為你服務',
-                            actions=[
-                                URITemplateAction(
-                                    label='加入好友',
-                                    uri='https://liff.line.me/1645278921-kWRPP32q/?accountId=615veimk'
-                                )
-                            ]
-                        )
-                    )
+                    TextSendMessage(text='哈囉~我是Tasktrackbot\n很高興能為你服務')  # 回覆未加入好友訊息
                 )
 
             elif isinstance(event, MemberJoinedEvent):  # 如果是新的使用者加入群組事件
@@ -112,70 +97,60 @@ def callback(request):
                     )
                 )
             elif isinstance(event, MessageEvent):  # 如果有訊息事件
-                if event.message.text == '查詢紀錄':
+                try:
                     user_id = event.source.user_id
-                    try:
-                        profile = line_bot_api.get_profile(user_id)
+                    profile = line_bot_api.get_profile(user_id)
+                    user = Users.objects(user_id=user_id).first()
+                    if user:
+                        user.display_name = profile.display_name
+                        user.status_message = profile.status_message
+                        user.picture_url = profile.picture_url
+                        user.save()
+                    else:
+                        taiwan_tz = timezone('Asia/Taipei')
+                        taiwan_time = datetime.now(taiwan_tz)
+                        users = Users(
+                            user_id = user_id,
+                            name = profile.display_name,
+                            status_message = profile.status_message,
+                            picture_url = profile.picture_url,
+                            punish = 0,
+                            created_at=taiwan_time
+                        )
+                        users.save()
+                    if event.message.text == '查詢紀錄':
                         reply_text = get_report_stats(user_id)  # 呼叫函式取得 ReportLog 統計數據
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=profile.display_name + reply_text)  # 構建回覆訊息
                         )
-                    except LineBotApiError:
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
-                        )
-                elif event.message.text == '回報進度':
-                    user_id = event.source.user_id
-                    try:
-                        profile = line_bot_api.get_profile(user_id)
+                    elif event.message.text == '回報進度':
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text="輸入格式：「完成 1」")  # 構建回覆訊息
                         )
-                    except LineBotApiError:
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
-                        )
-                elif event.message.text is not None and event.message.text.startswith('完成'):
-                    topic = extract_topic_from_message(event.message.text)
-                    if topic is not None:
-                        # 建立 ReportLog 物件並保存到資料庫
-                        user_id = event.source.user_id
-                        try:
-                            profile = line_bot_api.get_profile(user_id)
+                    elif event.message.text is not None and event.message.text.startswith('完成'):
+                        topic = extract_topic_from_message(event.message.text)
+                        if topic is not None:
                             reply_text = write_to_report_log(user_id=user_id, name=profile.display_name, topic=topic, done=True)
                             line_bot_api.reply_message(
                                 event.reply_token,
                                 TextSendMessage(text=reply_text)  # 回覆新增成功訊息
                             )
-                        except LineBotApiError:
+                        else:
                             line_bot_api.reply_message(
                                 event.reply_token,
-                                TextSendMessage(text='請先將我加為好友後再進行操作')  # 回覆未加入好友訊息
+                                TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
                             )
-                    else:
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text='未提取到數字，舉例:[完成 1]')  # 回覆未提取到數字訊息
-                        )
-                elif event.message.text is not None and event.message.text.startswith('：'):
-                    message = event.message.text
-                    user_id = event.source.user_id
-                    isMe = myself(user_id)
-                    if isMe:
-                        message = message.replace('：', '')
-                        line_notify_send_message(message)
-                # else:
-                #     message = event.message.text
-                #     reply_text = AI_chatbot(message)
-                #     line_bot_api.reply_message(
-                #         event.reply_token,
-                #         TextSendMessage(text=reply_text)  # 構建回覆訊息
-                #     )
-                    
+                    elif event.message.text is not None and event.message.text.startswith('：'):
+                        isMe = myself(user_id)
+                        if isMe:
+                            line_notify_send_message(event.message.text.replace('：', ''))
+                except LineBotApiError:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text='加我好友再說話！')  # 回覆未加入好友訊息
+                    )
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
